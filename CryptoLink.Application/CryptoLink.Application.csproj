@@ -21,9 +21,14 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Features\" />
-    <Folder Include="Contracts\" />
-    <Folder Include="Persistance\" />
+    <Folder Include="Contracts\LinkWords\" />
+    <Folder Include="Contracts\LinkExtendeds\" />
+    <Folder Include="Contracts\Users\" />
+    <Folder Include="Features\BookWords\" />
+    <Folder Include="Features\LinkExtendeds\Commands\CreateLinkExtendeds\" />
+    <Folder Include="Features\LinkExtendeds\Commands\" />
+    <Folder Include="Features\LinkExtendeds\Queries\" />
+    <Folder Include="Features\Users\" />
   </ItemGroup>
 
 </Project>

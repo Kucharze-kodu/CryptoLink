@@ -1,34 +1,26 @@
 using Newtonsoft.Json;
+using CryptoLink.Domain.Common.Primitives;
 using CryptoLink.Domain.Aggregates.Users.Enums;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
-using CryptoLink.Domain.Common.Primitives;
-using CryptoLink.Domain.Aggregates.SessionGameLists;
-using CryptoLink.Domain.DomainEvents;
-using CryptoLink.Domain.Aggregates.Comments;
-
+using CryptoLink.Domain.Aggregates.LinkExtendeds;
 
 namespace CryptoLink.Domain.Aggregates.Users;
 
 public sealed class User : AggregateRoot<UserId>
 {
+    public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string Email { get; set; }
-    public Password Password { get; set; }
-    public DateTime Birthday { get; set; }
-    
+    public PublicKey PublicKey { get; set; }
+
+    public LinkExtended LinksExtended { get; set; } = null;
+
+
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? VerifiedOnUtc { get; private set; }
     public DateTime LastModifiedOnUtc { get; private set; }
-    public VerificationToken VerificationToken { get; private set; }
-    public ResetPasswordToken? ResetPasswordToken { get; private set; }
     public Ban? Ban { get; private set; }
     public Role Role { get; private set; }
-
-    private readonly List<SessionGameList> _sessionGameList = new();
-    public IReadOnlyCollection<SessionGameList> SessionGames => _sessionGameList.AsReadOnly();
-
-    public ICollection<Comment> Comments { get; private set; } = new List<Comment>();
 
 
     private User(UserId id) : base(id)
@@ -47,11 +39,9 @@ public sealed class User : AggregateRoot<UserId>
         FirstName = firstName;
         LastName = lastName;
         Email = email;
-        Password = Password.Create(password);
-        Birthday = birthday;
+        PublicKey = PublicKey.Create(password);
         CreatedOnUtc = DateTime.UtcNow;
         LastModifiedOnUtc = DateTime.UtcNow;
-        VerificationToken = VerificationToken.Create();
         Role = Role.User;
     }
 
@@ -64,22 +54,15 @@ public sealed class User : AggregateRoot<UserId>
         string verifyEmailUrl
     )
     {
-        var user = new User(
+        var User = new User(
             default,
             firstName,
             lastName,
             email,
             password,
             birthday);
-        
-        user.RaiseDomainEvent(new UserRegistered(
-            firstName,
-            lastName,
-            email,
-            user.VerificationToken.Value,
-            verifyEmailUrl));
 
-        return user;
+        return User;
     }
     
     public User Load(
@@ -87,30 +70,24 @@ public sealed class User : AggregateRoot<UserId>
         string firstName,
         string lastName,
         string email,
-        Password password,
-        DateTime birthday,
+        PublicKey publicKey,
         DateTime createdOnUtc,
         DateTime? verifiedOnUtc,
         DateTime lastModifiedOnUtc,
         Ban ban,
-        Role role,
-        VerificationToken verificationToken,
-        ResetPasswordToken resetPasswordToken
+        Role role
     )
     {
         Id = id;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
-        Password = password;
-        Birthday = birthday;
+        PublicKey = publicKey;
         CreatedOnUtc = createdOnUtc;
         VerifiedOnUtc = verifiedOnUtc;
         LastModifiedOnUtc = lastModifiedOnUtc;
         Ban = ban;
         Role = role;
-        VerificationToken = verificationToken;
-        ResetPasswordToken = resetPasswordToken;
         return this;
     }
     
@@ -119,14 +96,8 @@ public sealed class User : AggregateRoot<UserId>
     
     public bool Verify(Guid token)
     {
-        // Check if user is already verified
+        // Check if User is already verified
         if (IsVerified)
-        {
-            return false;
-        }
-        
-        // Check if token is valid
-        if (!VerificationToken.Verify(token))
         {
             return false;
         }
@@ -134,17 +105,6 @@ public sealed class User : AggregateRoot<UserId>
         VerifiedOnUtc = DateTime.UtcNow;
         LastModifiedOnUtc = DateTime.UtcNow;
         return true;
-    }
-    
-    public void GenerateNewVerificationToken(string verifyEmailUrl)
-    {
-        VerificationToken = VerificationToken.Create();
-        
-        RaiseDomainEvent(new VerificationTokenRefreshed(
-            FirstName,
-            Email,
-            VerificationToken.Value,
-            verifyEmailUrl));
     }
     
     
