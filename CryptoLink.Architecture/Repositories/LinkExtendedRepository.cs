@@ -1,7 +1,7 @@
 ﻿using CryptoLink.Application.Persistance;
 using CryptoLink.Architecture.Database;
-using CryptoLink.Domain.Aggregates.LinkExtended;
-using CryptoLink.Domain.Aggregates.LinkExtended.ValueObcjects;
+using CryptoLink.Domain.Aggregates.LinkExtendeds;
+using CryptoLink.Domain.Aggregates.LinkExtendeds.ValueObcjects;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
 
 

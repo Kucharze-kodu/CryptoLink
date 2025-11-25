@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\CryptoLink.Application\CryptoLink.Application.csproj" />
     <ProjectReference Include="..\..\CryptoLink.Architecture\CryptoLink.Architecture.csproj" />
     <ProjectReference Include="..\..\CryptoLink.Domain\CryptoLink.Domain.csproj" />
+    <ProjectReference Include="..\CryptoLink.WebUI.Client\CryptoLink.WebUI.Client.csproj" />
   </ItemGroup>
 
 </Project>
