@@ -1,0 +1,52 @@
+version: '3.4'
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}cryptolink-WebUI
+    build:
+      context: .
+      dockerfile: CryptoLink.Api/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=cryptolink;Username=postgres;Password=postgres
+      - Email__ApiKeyPublic=${Email__ApiKeyPublic}
+      - Email__ApiKeyPrivate=${Email__ApiKeyPrivate}
+      - Email__FromEmail=${Email__FromEmail}
+      - Email__FromName=${Email__FromName}
+    user: root
+    depends_on:
+      - db
+
+  webui:
+    image: ${DOCKER_REGISTRY-}cryptolink-webui
+    build:
+      context: .
+      dockerfile: CryptoLink.WebUI/Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - API_BASE_URL=http://api:5000
+    depends_on:
+      - api
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=cryptolink
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    external: true

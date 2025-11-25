@@ -1,0 +1,39 @@
+version: '3.4'
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}gamegather-api
+    build:
+      context: .
+      dockerfile: GameGather.Api/Dockerfile
+    ports:
+      - 5000:5000
+      - 5001:5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=gamegather;Username=postgres;Password=postgres
+      - Email__ApiKeyPublic=${Email__ApiKeyPublic}
+      - Email__ApiKeyPrivate=${Email__ApiKeyPrivate}
+      - Email__FromEmail=${Email__FromEmail}
+      - Email__FromName=${Email__FromName}
+    user: root
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=gamegather
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    external: true
