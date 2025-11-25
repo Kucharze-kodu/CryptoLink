@@ -1,7 +1,10 @@
 ﻿using CryptoLink.Application.Persistance;
+using CryptoLink.Application.Utils;
+using CryptoLink.Architecture.Authentication;
 using CryptoLink.Architecture.Database;
 using CryptoLink.Architecture.Repositories;
 using CryptoLink.Architecture.Utils;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,9 +28,9 @@ namespace CryptoLink.Architecture
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookWordRepository, BookWordRepository>();
             services.AddScoped<ILinkExtendedRepository, LinkExtendedRepository>();
+            services.AddScoped<IUserContext, UserContext>();
 
 
-/*            services.AddScoped<IEmailService, EmailService>();
 
             services.AddAuthentication(x =>
             {
@@ -39,31 +42,12 @@ namespace CryptoLink.Architecture
 
             services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBearerOptionsSetup>();
-            services.ConfigureOptions<EmailOptionsSetup>();
+
 
             services.AddAuthorization();
 
             services.AddHttpContextAccessor();
 
-            services.AddQuartz(configure =>
-            {
-                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
-
-                configure
-                    .AddJob<ProcessOutboxMessagesJob>(jobKey)
-                    .AddTrigger(trigger =>
-                        trigger
-                            .ForJob(jobKey)
-                            .WithIdentity("ProcessOutboxMessagesJob-trigger")
-                            .WithSimpleSchedule(schedule =>
-                                schedule
-                                    .WithIntervalInSeconds(10)
-                                    .RepeatForever())
-                    );
-
-            });
-
-            services.AddQuartzHostedService();*/
 
             return services;
         }

@@ -1,5 +1,4 @@
-﻿
-using CryptoLink.Application.Persistance;
+﻿using CryptoLink.Application.Persistance;
 using CryptoLink.Architecture.Database;
 
 namespace CryptoLink.Architecture.Repositories

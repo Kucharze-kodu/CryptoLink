@@ -8,7 +8,7 @@ namespace CryptoLink.Architecture.Database
 {
     public class CryptoLinkDbContext : DbContext
     {
-        CryptoLinkDbContext(DbContextOptions<CryptoLinkDbContext> options)
+        public CryptoLinkDbContext(DbContextOptions<CryptoLinkDbContext> options)
         : base(options) 
         {
         
