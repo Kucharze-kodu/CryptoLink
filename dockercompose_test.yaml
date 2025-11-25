@@ -1,36 +1,30 @@
-﻿services:
+﻿
+services:
   # Ujednolicona usługa hostująca Blazor WebAssembly (API + statyczny klient)
   app:
     image: cryptolink-webui:latest
+    # Używamy explicite 'build' zamiast polegania tylko na 'image'
     build:
       context: .
-      # Ścieżka do Dockerfile
+      # ZMIANA: Ścieżka do Dockerfile skorygowana o folder src/WebUI
       dockerfile: CryptoLink.WebUI/CryptoLink.WebUI/Dockerfile
-    
-    # 1. Zmiana: Mapowanie tylko HTTP (80 -> 5000). 
-    # Usunięto mapowanie portu 5001:5001, aby uniknąć problemów z certyfikatem.
+    # Mapowanie portów: Port hosta (80) -> Port kontenera (5000)
     ports:
-      - "80:5000" 
-      
+      - "80:5000"
+      - "5001:5001"
     environment:
       # Ustawienie środowiska
       - ASPNETCORE_ENVIRONMENT=Development
-      
-      # 2. Zmiana: Wymuszenie nasłuchiwania tylko na HTTP (5000). 
-      # Usunięto konfigurację HTTPS.
-      - ASPNETCORE_URLS=http://+:5000 
-      
-      # Opcjonalnie usuwamy te zmienne, ponieważ ASPNETCORE_URLS jest wystarczające, 
-      # ale nie są już szkodliwe.
-      # - ASPNETCORE_HTTP_PORTS=5000
-      # - ASPNETCORE_HTTPS_PORTS=5001 # To bym usunął całkowicie
-      
+      # Wskazanie portów, na których aplikacja ma nasłuchiwać w kontenerze
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
       # Konfiguracja stringa połączenia
       - ConnectionStrings__Default=Host=db;Port=5432;Database=cryptolink;Username=postgres;Password=postgres
     depends_on:
       - db
 
- # Serwis PostgreSQL
+  # Serwis PostgreSQL
   db:
     image: postgres:16-alpine
     restart: always
