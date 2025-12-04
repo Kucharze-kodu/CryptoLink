@@ -1,7 +1,6 @@
 ﻿using CryptoLink.Application.Persistance;
 using CryptoLink.Architecture.Database;
 using CryptoLink.Domain.Aggregates.BookWords;
-using CryptoLink.Domain.Aggregates.BookWords.ValueObcjets;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoLink.Architecture.Repositories
@@ -77,6 +76,18 @@ namespace CryptoLink.Architecture.Repositories
 
             return linkSegment;
 
+        }
+
+        public async Task RemoveBookWord(string bookname, CancellationToken cancellationToken = default)
+        {
+            var result = await _dbContext.BookWords.SingleOrDefaultAsync(x => x.Word == bookname, cancellationToken);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            _dbContext.BookWords.Remove(result);
         }
     }
 }

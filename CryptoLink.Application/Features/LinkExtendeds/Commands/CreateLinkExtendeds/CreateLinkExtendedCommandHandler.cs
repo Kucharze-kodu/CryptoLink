@@ -35,6 +35,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
                 return Errors.LinkExtended.IsNotAuthorized;
             }
 
+            // var userId = _userContext.GetUserId();
 
 
 
