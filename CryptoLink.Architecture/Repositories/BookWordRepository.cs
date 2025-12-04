@@ -1,5 +1,8 @@
 ﻿using CryptoLink.Application.Persistance;
 using CryptoLink.Architecture.Database;
+using CryptoLink.Domain.Aggregates.BookWords;
+using CryptoLink.Domain.Aggregates.BookWords.ValueObcjets;
+using Microsoft.EntityFrameworkCore;
 
 namespace CryptoLink.Architecture.Repositories
 {
@@ -13,24 +16,67 @@ namespace CryptoLink.Architecture.Repositories
         }
 
 
-        public Task AddBookWord(string word, CancellationToken cancellationToken = default)
+        public async Task AddBookWord(BookWord bookWord, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.BookWords.SingleOrDefaultAsync(x => x.Word == bookWord.Word, cancellationToken);
+
+            if (result != null)
+            {
+                return;
+            }
+            await _dbContext.BookWords.AddAsync(bookWord, cancellationToken);
+            
+
         }
 
-        public Task<IEnumerable<string>> GetAllBookWordCategory(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BookWord>> GetAllBookWordCategory(string category, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.BookWords.Where(x => x.Category == category).ToListAsync(cancellationToken);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return result;
+
         }
 
-        public Task<IEnumerable<string>> GetAllBookWords(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BookWord>> GetAllBookWords(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.BookWords.ToListAsync(cancellationToken);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return result;
         }
 
-        public Task<string> RandomLink(int howMany, CancellationToken cancellationToken = default)
+        public async Task<string> RandomLink(int howMany, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if( howMany <= 0)
+            {
+                return null;
+            }
+
+            var randomWords = await _dbContext.BookWords
+                .OrderByDescending(x => EF.Functions.Random()) 
+                .Take(howMany) 
+                .Select(x => x.Word) 
+                .ToListAsync(cancellationToken);
+
+            if (randomWords == null || randomWords.Count == 0)
+            {
+                return null;
+            }
+
+            string linkSegment = string.Join("-", randomWords);
+
+
+            return linkSegment;
+
         }
     }
 }

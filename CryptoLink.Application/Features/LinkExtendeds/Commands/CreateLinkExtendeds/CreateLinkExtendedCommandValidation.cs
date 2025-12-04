@@ -13,10 +13,10 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
         {
             RuleFor(r => r.UrlExtended)
                 .NotEmpty()
-                .WithMessage("Description post is required");
+                .WithMessage("Url Extende is required");
             RuleFor(r => r.ShortUrl)
                 .NotEmpty()
-                .WithMessage("Description post is required");
+                .WithMessage("Short url is required");
         }
     }
 }

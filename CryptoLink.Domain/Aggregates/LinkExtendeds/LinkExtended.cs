@@ -13,7 +13,7 @@ namespace CryptoLink.Domain.Aggregates.LinkExtendeds
         public string UrlExtended { get; set; }
         public string ShortUrl { get; set; }
         public DateTime CreatedOnUtc { get; private set; }
-        public DateTime? ExpiretOnUtc { get; private set; } = null;
+        public DateTime? ExpiretOnUtc { get; set; } = null;
 
 
 

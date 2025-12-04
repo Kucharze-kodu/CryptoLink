@@ -3,6 +3,7 @@ using CryptoLink.Architecture.Database;
 using CryptoLink.Domain.Aggregates.LinkExtendeds;
 using CryptoLink.Domain.Aggregates.LinkExtendeds.ValueObcjects;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace CryptoLink.Architecture.Repositories
@@ -18,29 +19,77 @@ namespace CryptoLink.Architecture.Repositories
 
 
 
-        public async Task CreateLinkExtended(UserId userId, string urlExtended, string urlShort, DateTime? expiresAt, CancellationToken cancellationToken = default)
+        public async Task CreateLinkExtended(LinkExtended linkExtended, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = _dbContext.LinkExtendeds.FirstOrDefaultAsync(
+                x => x.UrlExtended == linkExtended.UrlExtended && x.ExpiretOnUtc > linkExtended.ExpiretOnUtc, cancellationToken);
+
+            if (result == null)
+            {
+                return;
+            }
+            await _dbContext.LinkExtendeds.AddAsync(
+                linkExtended,    
+                cancellationToken);
+
         }
 
-        public Task DeleteLinkExntended(UserId userId, LinkExtendedId linkExtendedId, CancellationToken cancellationToken = default)
+        public async Task DeleteLinkExntended(UserId userId, LinkExtendedId linkExtendedId, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.LinkExtendeds.FirstOrDefaultAsync(x => x.Id == linkExtendedId && x.UserId == userId, cancellationToken);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            _dbContext.LinkExtendeds.Remove(result);
+
         }
 
-        public Task EditLinkExntended(UserId userId, LinkExtendedId linkExtendedId, string urlExtended, string urlShort, DateTime? expiresAt, CancellationToken cancellationToken = default)
+        public async Task EditLinkExntended(LinkExtended linkExtendedt, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.LinkExtendeds.FirstOrDefaultAsync(x => x.Id == linkExtendedt.Id && x.UserId == linkExtendedt.UserId, cancellationToken);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            if(linkExtendedt.UrlExtended != null)
+            {
+                result.UrlExtended = linkExtendedt.UrlExtended;
+            }
+            if(linkExtendedt.ShortUrl != null)
+            {
+                result.ShortUrl = linkExtendedt.ShortUrl;
+            }
+            if(linkExtendedt.ExpiretOnUtc != null)
+            {
+                result.ExpiretOnUtc = linkExtendedt.ExpiretOnUtc;
+            }
+
         }
 
-        public Task<IEnumerable<LinkExtended>> GetAllLinkExntended(UserId userId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<LinkExtended>> GetAllLinkExntended(UserId userId, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var resultlist = await _dbContext.LinkExtendeds
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken);
+
+            return resultlist;
         }
 
-        public Task<string> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
+        public async Task<string> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await _dbContext.LinkExtendeds
+                .FirstOrDefaultAsync(x => x.ShortUrl == linkExtended && (x.ExpiretOnUtc == null || x.ExpiretOnUtc > DateTime.UtcNow), cancellationToken);
+
+            if(result == null)
+            {
+                return null;
+            }    
+            return result.ShortUrl;
         }
     }
 }
