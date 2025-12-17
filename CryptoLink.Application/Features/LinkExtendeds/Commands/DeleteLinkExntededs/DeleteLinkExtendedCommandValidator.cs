@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace CryptoLink.Application.Features.LinkExtendeds.Commands.DeleteLinkExntededs
 {
-    internal class DeleteLinkExtendedCommandValidator
+    public class DeleteLinkExtendedCommandValidator : AbstractValidator<DeleteLinkExtendedCommand>
     {
+        public DeleteLinkExtendedCommandValidator()
+        {
+
+        }
     }
 }

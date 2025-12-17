@@ -1,6 +1,5 @@
 ﻿using CryptoLink.Domain.Aggregates.BookWords.ValueObcjets;
 using CryptoLink.Domain.Common.Primitives;
-using System.Text.Json.Serialization;
 
 
 namespace CryptoLink.Domain.Aggregates.BookWords
@@ -16,7 +15,6 @@ namespace CryptoLink.Domain.Aggregates.BookWords
         }
 
 
-        [JsonConstructor]
         private BookWord(
         BookWordId id,
         string word,
@@ -32,11 +30,12 @@ namespace CryptoLink.Domain.Aggregates.BookWords
             string category
         )
         {
-            return new BookWord(
-                id: id,
-                word: word,
-                category: category
+            var bookWord = new BookWord(
+                id,
+                word,
+                category
             );
+            return bookWord;
         }
 
         public BookWord Load(

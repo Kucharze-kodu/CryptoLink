@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
+
 
 namespace CryptoLink.Application.Features.BookWords.Commands.DeleteBookWords
 {
-    internal class DeleteBookWordCommandValidator
+    public class DeleteBookWordCommandValidator : AbstractValidator<DeleteBookWordCommand>
     {
+        public DeleteBookWordCommandValidator()
+        {
+
+        }
     }
 }

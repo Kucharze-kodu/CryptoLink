@@ -21,10 +21,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Contracts\LinkWords\" />
     <Folder Include="Contracts\Users\" />
-    <Folder Include="Features\BookWords\" />
-    <Folder Include="Features\LinkExtendeds\Queries\" />
     <Folder Include="Features\Users\" />
   </ItemGroup>
 

@@ -17,9 +17,7 @@ namespace CryptoLink.Domain.Aggregates.LinkExtendeds
 
 
 
-        // connect table
-        private readonly List<Links> _links = new();
-        public IReadOnlyCollection<Links> Links => _links.AsReadOnly();
+        // connect table;
 
         private readonly List<User> _user = new();
         public IReadOnlyCollection<User> Users => _user.AsReadOnly();
@@ -30,8 +28,6 @@ namespace CryptoLink.Domain.Aggregates.LinkExtendeds
         {
         }
 
-
-        [JsonConstructor]
         private LinkExtended(
         LinkExtendedId id,
         UserId userId,

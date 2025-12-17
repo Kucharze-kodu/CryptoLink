@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CryptoLink.Application.Common.Messaging;
+using CryptoLink.Application.Contracts.LinkWords;
+
 
 namespace CryptoLink.Application.Features.BookWords.Commands.CreateBookWords
 {
-    internal class CreateBookWordCommand
-    {
-    }
+    public record CreateBookWordCommand
+    (
+        string name,
+        string category
+        ):ICommand<BookWordResponse>;
 }

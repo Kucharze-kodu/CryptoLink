@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using CryptoLink.Domain.Common.Primitives;
 using CryptoLink.Domain.Aggregates.Users.Enums;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
@@ -27,7 +26,6 @@ public sealed class User : AggregateRoot<UserId>
     {
     }
 
-    [JsonConstructor]
     private User(
         UserId id,
         string firstName,

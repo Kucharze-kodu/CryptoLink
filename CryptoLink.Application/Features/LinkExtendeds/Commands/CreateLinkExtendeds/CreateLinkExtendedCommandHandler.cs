@@ -41,7 +41,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
 
 
 
-            throw new NotImplementedException();
+            return new LinkExtendedResponse("create message");
         }
     }
 }
