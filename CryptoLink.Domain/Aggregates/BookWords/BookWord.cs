@@ -25,13 +25,12 @@ namespace CryptoLink.Domain.Aggregates.BookWords
         }
 
         public static BookWord Create(
-            BookWordId id,
             string word,
             string category
         )
         {
             var bookWord = new BookWord(
-                id,
+                default,
                 word,
                 category
             );

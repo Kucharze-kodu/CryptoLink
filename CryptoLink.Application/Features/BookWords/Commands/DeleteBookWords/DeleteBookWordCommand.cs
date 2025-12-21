@@ -10,6 +10,6 @@ namespace CryptoLink.Application.Features.BookWords.Commands.DeleteBookWords
 {
     public record DeleteBookWordCommand
     (
-        
+        int Id
         ):ICommand<BookWordResponse>;
 }

@@ -8,7 +8,12 @@ namespace CryptoLink.Application.Features.BookWords.Commands.CreateBookWords
     {
         public CreateBookWordCommandValidator()
         {
-
+            RuleFor(r => r.Name)
+            .NotEmpty()
+            .WithMessage("Name is required");
+            RuleFor(r => r.Category)
+            .NotEmpty()
+            .WithMessage("Category is required");
         }
     }
 }

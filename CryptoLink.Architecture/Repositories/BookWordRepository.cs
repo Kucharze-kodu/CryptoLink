@@ -1,6 +1,7 @@
 ﻿using CryptoLink.Application.Persistance;
 using CryptoLink.Architecture.Database;
 using CryptoLink.Domain.Aggregates.BookWords;
+using CryptoLink.Domain.Aggregates.BookWords.ValueObcjets;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoLink.Architecture.Repositories
@@ -53,7 +54,7 @@ namespace CryptoLink.Architecture.Repositories
             return result;
         }
 
-        public async Task<string> RandomLink(int howMany, CancellationToken cancellationToken = default)
+        public async Task<string> RandomLink(int howMany, List<string> categories, CancellationToken cancellationToken = default)
         {
             if( howMany <= 0)
             {
@@ -61,9 +62,10 @@ namespace CryptoLink.Architecture.Repositories
             }
 
             var randomWords = await _dbContext.BookWords
-                .OrderByDescending(x => EF.Functions.Random()) 
-                .Take(howMany) 
-                .Select(x => x.Word) 
+                .Where(x => categories.Contains(x.Category))
+                .OrderBy(x => EF.Functions.Random())
+                .Take(howMany)
+                .Select(x => x.Word)
                 .ToListAsync(cancellationToken);
 
             if (randomWords == null || randomWords.Count == 0)
@@ -75,12 +77,11 @@ namespace CryptoLink.Architecture.Repositories
 
 
             return linkSegment;
-
         }
 
-        public async Task RemoveBookWord(string bookname, CancellationToken cancellationToken = default)
+        public async Task RemoveBookWord(BookWordId idBookWord, CancellationToken cancellationToken = default)
         {
-            var result = await _dbContext.BookWords.SingleOrDefaultAsync(x => x.Word == bookname, cancellationToken);
+            var result = await _dbContext.BookWords.SingleOrDefaultAsync(x => x.Id == idBookWord, cancellationToken);
 
             if (result == null)
             {

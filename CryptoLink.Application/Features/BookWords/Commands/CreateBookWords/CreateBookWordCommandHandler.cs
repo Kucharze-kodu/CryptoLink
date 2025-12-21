@@ -2,6 +2,8 @@
 using CryptoLink.Application.Contracts.LinkWords;
 using CryptoLink.Application.Persistance;
 using CryptoLink.Application.Utils;
+using CryptoLink.Domain.Aggregates.BookWords;
+using CryptoLink.Domain.Aggregates.Users.ValueObjects;
 using CryptoLink.Domain.Common.Errors;
 using ErrorOr;
 
@@ -26,16 +28,20 @@ namespace CryptoLink.Application.Features.BookWords.Commands.CreateBookWords
             var isVerify = _userContext.IsAuthenticated;
             if (isVerify == false)
             {
-                return Errors.LinkExtended.IsNotAuthorized;
+                return Errors.BookWord.IsNotAuthorized;
             }
 
-            // var userId = _userContext.GetUserId();
+            var id = _userContext.UserId;
+            UserId userId = UserId.Create(Convert.ToInt32(id));
 
 
+            var bookWord = BookWord.Create(
+                request.Name,
+                request.Category
+            );
 
-
-
-
+            await _bookWordRepository.AddBookWord(bookWord, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new BookWordResponse("word to book added");
         }

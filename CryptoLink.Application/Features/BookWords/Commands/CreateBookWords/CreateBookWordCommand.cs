@@ -6,7 +6,7 @@ namespace CryptoLink.Application.Features.BookWords.Commands.CreateBookWords
 {
     public record CreateBookWordCommand
     (
-        string name,
-        string category
+        string Name,
+        string Category
         ):ICommand<BookWordResponse>;
 }

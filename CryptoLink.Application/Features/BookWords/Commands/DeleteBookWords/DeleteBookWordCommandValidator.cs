@@ -7,7 +7,9 @@ namespace CryptoLink.Application.Features.BookWords.Commands.DeleteBookWords
     {
         public DeleteBookWordCommandValidator()
         {
-
+            RuleFor(r => r.Id)
+            .NotEmpty()
+            .WithMessage("Id is required");
         }
     }
 }
