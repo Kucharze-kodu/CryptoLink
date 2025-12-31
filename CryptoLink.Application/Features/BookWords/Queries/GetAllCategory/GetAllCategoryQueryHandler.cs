@@ -5,24 +5,21 @@ using CryptoLink.Application.Utils;
 using CryptoLink.Domain.Common.Errors;
 using ErrorOr;
 
-
-namespace CryptoLink.Application.Features.BookWords.Queries.GetAllBookWordCategory
+namespace CryptoLink.Application.Features.BookWords.Queries.GetAllCategory
 {
-    public class GetAllBookWordCategoryQueryHandler : ICommandHandler<GetAllBookWordCategoryQuery, List<GetBookWordDto>>
+    public class GetAllCategoryQueryHandler : ICommandHandler<GetAllCategoryQuery, List<GetCategoryDto>>
     {
         private readonly IBookWordRepository _bookWordRepository;
         private readonly IUserContext _userContext;
 
-
-        public GetAllBookWordCategoryQueryHandler(IBookWordRepository bookWordRepository, IUserContext userContext)
+        public GetAllCategoryQueryHandler(IBookWordRepository bookWordRepository, IUserContext userContext)
         {
             _bookWordRepository = bookWordRepository;
             _userContext = userContext;
         }
 
 
-
-        public async Task<ErrorOr<List<GetBookWordDto>>> Handle(GetAllBookWordCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<List<GetCategoryDto>>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
         {
             var isVerify = _userContext.IsAuthenticated;
             if (isVerify == false)
@@ -30,13 +27,11 @@ namespace CryptoLink.Application.Features.BookWords.Queries.GetAllBookWordCatego
                 return Errors.BookWord.IsNotAuthorized;
             }
 
-            var result = await _bookWordRepository.GetAllBookWordCategory(request.Categories, cancellationToken);
+            var result = await _bookWordRepository.GetAllCategory(cancellationToken);
 
-
-            List<GetBookWordDto> listDto = result.Select(x => new GetBookWordDto
+            List<GetCategoryDto> listDto = result.Select(x => new GetCategoryDto
             {
-                Id = Convert.ToInt32(x.Id.Value),
-                Name = x.Word
+                Name = x
             }).ToList();
 
             return listDto;

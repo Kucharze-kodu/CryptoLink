@@ -29,9 +29,20 @@ namespace CryptoLink.Architecture.Repositories
 
         }
 
-        public async Task<IEnumerable<BookWord>> GetAllBookWordCategory(string category, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BookWord>> GetAllBookWordCategory(List<string> category, CancellationToken cancellationToken = default)
         {
-            var result = await _dbContext.BookWords.Where(x => x.Category == category).ToListAsync(cancellationToken);
+            List<BookWord>? result = new List<BookWord?>();
+
+            if (category == null || category.Count == 0)
+            {
+                result = await _dbContext.BookWords.ToListAsync(cancellationToken);
+            }
+            else
+            {
+                result = await _dbContext.BookWords
+                        .Where(x => category.Contains(x.Category))
+                        .ToListAsync(cancellationToken);
+            }
 
             if (result == null)
             {
@@ -42,9 +53,12 @@ namespace CryptoLink.Architecture.Repositories
 
         }
 
-        public async Task<IEnumerable<BookWord>> GetAllBookWords(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetAllCategory(CancellationToken cancellationToken = default)
         {
-            var result = await _dbContext.BookWords.ToListAsync(cancellationToken);
+            var result = await _dbContext.BookWords
+                            .Select(x => x.Category) 
+                            .Distinct()
+                            .ToListAsync(cancellationToken);
 
             if (result == null)
             {

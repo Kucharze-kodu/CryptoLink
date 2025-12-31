@@ -7,8 +7,9 @@ namespace CryptoLink.Application.Persistance
     {
         Task AddBookWord(BookWord bookWord, CancellationToken cancellationToken = default);
         Task RemoveBookWord(BookWordId IdBookWord, CancellationToken cancellationToken = default);
-        Task<IEnumerable<BookWord>> GetAllBookWordCategory(string category, CancellationToken cancellationToken = default);
-        Task<IEnumerable<BookWord>> GetAllBookWords(CancellationToken cancellationToken = default);
         Task<string> RandomLink(int howMany,List<string> categories, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<BookWord>> GetAllBookWordCategory(List<string> category, CancellationToken cancellationToken = default);
+        Task<IEnumerable<string>> GetAllCategory(CancellationToken cancellationToken = default);
     }
 }

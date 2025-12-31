@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CryptoLink.Application.Common.Messaging;
+using CryptoLink.Application.Features.BookWords.Queries.DTOs;
+
+
 
 namespace CryptoLink.Application.Features.BookWords.Queries.GetAllBookWordCategory
 {
-    internal class GetAllBookWordCategoryQuery
-    {
-    }
+    public record GetAllBookWordCategoryQuery(
+        List<string> Categories
+        ) : ICommand<List<GetBookWordDto>>;
 }
