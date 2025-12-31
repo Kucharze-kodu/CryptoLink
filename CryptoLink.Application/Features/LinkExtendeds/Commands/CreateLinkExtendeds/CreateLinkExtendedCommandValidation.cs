@@ -14,7 +14,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
             RuleFor(r => r.UrlExtended)
                 .NotEmpty()
                 .WithMessage("Url Extende is required");
-            RuleFor(r => r.ShortUrl)
+            RuleFor(r => r.UrlShort)
                 .NotEmpty()
                 .WithMessage("Short url is required");
         }

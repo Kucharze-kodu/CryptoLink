@@ -6,7 +6,9 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.DeleteLinkExnte
     {
         public DeleteLinkExtendedCommandValidator()
         {
-
+            RuleFor(r => r.Id)
+            .NotEmpty()
+            .WithMessage("Id is required");
         }
     }
 }

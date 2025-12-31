@@ -7,6 +7,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
     public record CreateLinkExtendedCommand
     (
         string UrlExtended,
-        string ShortUrl
+        string UrlShort,
+        DateTime DataExpire
         ) : ICommand<LinkExtendedResponse>;
 }

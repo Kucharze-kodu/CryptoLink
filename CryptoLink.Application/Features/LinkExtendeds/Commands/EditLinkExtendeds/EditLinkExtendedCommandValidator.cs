@@ -12,7 +12,9 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.EditLinkExtende
     {
         public EditLinkExtendedCommandValidator()
         {
-
+            RuleFor(r => r.Id)
+                .NotEmpty()
+                .WithMessage("Id url is required");
         }
     }
 }

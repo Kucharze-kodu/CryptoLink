@@ -38,7 +38,7 @@ namespace CryptoLink.Architecture.Repositories
         {
             var result = await _dbContext.LinkExtendeds.FirstOrDefaultAsync(x => x.Id == linkExtendedId && x.UserId == userId, cancellationToken);
 
-            if (result == null)
+            if (result is null)
             {
                 return;
             }
@@ -47,26 +47,22 @@ namespace CryptoLink.Architecture.Repositories
 
         }
 
-        public async Task EditLinkExntended(LinkExtended linkExtendedt, CancellationToken cancellationToken = default)
+        public async Task EditLinkExntended(UserId userId, LinkExtendedId linkExtendedId, string urlExtended, DateTime dataExpire, CancellationToken cancellationToken = default)
         {
-            var result = await _dbContext.LinkExtendeds.FirstOrDefaultAsync(x => x.Id == linkExtendedt.Id && x.UserId == linkExtendedt.UserId, cancellationToken);
+            var result = await _dbContext.LinkExtendeds.FirstOrDefaultAsync(x => x.Id == linkExtendedId && x.UserId == userId, cancellationToken);
 
-            if (result == null)
+            if (result is null)
             {
                 return;
             }
 
-            if(linkExtendedt.UrlExtended != null)
+            if(urlExtended != null)
             {
-                result.UrlExtended = linkExtendedt.UrlExtended;
+                result.UrlExtended = urlExtended;
             }
-            if(linkExtendedt.ShortUrl != null)
+            if(dataExpire != DateTime.UtcNow)
             {
-                result.ShortUrl = linkExtendedt.ShortUrl;
-            }
-            if(linkExtendedt.ExpiretOnUtc != null)
-            {
-                result.ExpiretOnUtc = linkExtendedt.ExpiretOnUtc;
+                result.ExpiretOnUtc =dataExpire;
             }
 
         }
@@ -80,12 +76,12 @@ namespace CryptoLink.Architecture.Repositories
             return resultlist;
         }
 
-        public async Task<string> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
+        public async Task<string?> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.LinkExtendeds
                 .FirstOrDefaultAsync(x => x.ShortUrl == linkExtended && (x.ExpiretOnUtc == null || x.ExpiretOnUtc > DateTime.UtcNow), cancellationToken);
 
-            if(result == null)
+            if(result is null)
             {
                 return null;
             }    

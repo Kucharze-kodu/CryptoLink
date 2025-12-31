@@ -5,6 +5,8 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.EditLinkExtende
 {
     public record EditLinkExtendedCommand
     (
-        
-        ): ICommand<LinkExtendedResponse>;
+        int Id,
+        string UrlExtended,
+        DateTime DataExpire
+        ) : ICommand<LinkExtendedResponse>;
 }

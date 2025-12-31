@@ -2,8 +2,10 @@
 using CryptoLink.Application.Contracts.LinkExtendeds;
 using CryptoLink.Application.Persistance;
 using CryptoLink.Application.Utils;
-using ErrorOr;
+using CryptoLink.Domain.Aggregates.LinkExtendeds;
+using CryptoLink.Domain.Aggregates.Users.ValueObjects;
 using CryptoLink.Domain.Common.Errors;
+using ErrorOr;
 
 
 namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExtendeds
@@ -35,11 +37,19 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExten
                 return Errors.LinkExtended.IsNotAuthorized;
             }
 
-            // var userId = _userContext.GetUserId();
+            var id = _userContext.UserId;
+            UserId userId = UserId.Create(Convert.ToInt32(id));
+
+            LinkExtended _link = LinkExtended.Create(
+                userId,
+                request.UrlExtended,
+                request.UrlShort,
+                request.DataExpire
+            );
 
 
-
-
+            await _linkExtendedRepository.CreateLinkExtended(_link, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new LinkExtendedResponse("create message");
         }
