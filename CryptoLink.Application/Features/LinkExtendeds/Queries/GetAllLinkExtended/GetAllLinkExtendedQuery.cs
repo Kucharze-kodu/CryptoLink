@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CryptoLink.Application.Common.Messaging;
+using CryptoLink.Application.Features.LinkExtendeds.Queries.DTOs;
+
 
 namespace CryptoLink.Application.Features.LinkExtendeds.Queries.GetAllLinkExtended
 {
-    internal class GetAllLinkExtendedQuery
-    {
-    }
+    public record GetAllLinkExtendedQuery(
+        ) : ICommand<List<GetLinkExtendedDto>>;
 }

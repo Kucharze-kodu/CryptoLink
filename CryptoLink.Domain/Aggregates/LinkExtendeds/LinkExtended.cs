@@ -11,7 +11,7 @@ namespace CryptoLink.Domain.Aggregates.LinkExtendeds
     {
         public UserId UserId { get; private set; }
         public string UrlExtended { get; set; }
-        public string ShortUrl { get; set; }
+        public string UrlShort { get; set; }
         public DateTime CreatedOnUtc { get; private set; }
         public DateTime? ExpiretOnUtc { get; set; } = null;
 
@@ -32,12 +32,12 @@ namespace CryptoLink.Domain.Aggregates.LinkExtendeds
         LinkExtendedId id,
         UserId userId,
         string urlExtended,
-        string shortUrl,
+        string urlShort,
         DateTime? expiretOnUtc) : base(id)
         {
             UserId = userId;
             UrlExtended = urlExtended;
-            ShortUrl = shortUrl;
+            UrlShort = urlShort;
             CreatedOnUtc = DateTime.UtcNow;
             ExpiretOnUtc = expiretOnUtc;
         }

@@ -79,13 +79,13 @@ namespace CryptoLink.Architecture.Repositories
         public async Task<string?> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.LinkExtendeds
-                .FirstOrDefaultAsync(x => x.ShortUrl == linkExtended && (x.ExpiretOnUtc == null || x.ExpiretOnUtc > DateTime.UtcNow), cancellationToken);
+                .FirstOrDefaultAsync(x => x.UrlExtended == linkExtended && (x.ExpiretOnUtc == null || x.ExpiretOnUtc > DateTime.UtcNow), cancellationToken);
 
             if(result is null)
             {
                 return null;
             }    
-            return result.ShortUrl;
+            return result.UrlShort;
         }
     }
 }
