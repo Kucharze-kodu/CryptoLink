@@ -1,0 +1,33 @@
+﻿services:
+  app:
+    image: cryptolink-webui:latest
+    build:
+      context: .
+      dockerfile: CryptoLink.WebUI/CryptoLink.WebUI/Dockerfile
+    ports:
+      - "80:5000" 
+      
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      
+      - ASPNETCORE_URLS=http://+:5000 
+      
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=cryptolink;Username=postgres;Password=postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=cryptolink
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    external: true

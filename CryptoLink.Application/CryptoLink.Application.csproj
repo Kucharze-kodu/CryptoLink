@@ -21,9 +21,8 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Features\" />
-    <Folder Include="Contracts\" />
-    <Folder Include="Persistance\" />
+    <Folder Include="Contracts\Users\" />
+    <Folder Include="Features\Users\" />
   </ItemGroup>
 
 </Project>

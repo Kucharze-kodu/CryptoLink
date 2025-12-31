@@ -1,0 +1,9 @@
+﻿using CryptoLink.Application.Common.Messaging;
+using CryptoLink.Application.Features.LinkExtendeds.Queries.DTOs;
+
+
+namespace CryptoLink.Application.Features.LinkExtendeds.Queries.GetAllLinkExtended
+{
+    public record GetAllLinkExtendedQuery(
+        ) : ICommand<List<GetLinkExtendedDto>>;
+}

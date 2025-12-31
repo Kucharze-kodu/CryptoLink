@@ -3,21 +3,21 @@ using Newtonsoft.Json;
 
 namespace CryptoLink.Domain.Aggregates.Users.ValueObjects;
 
-public sealed class Password : ValueObject
+public sealed class PublicKey : ValueObject
 {
     public string Value { get; private set; }
     public DateTime LastModifiedOnUtc { get; private set; }
 
     [JsonConstructor]
-    private Password(string value)
+    private PublicKey(string value)
     {
         Value = value;
         LastModifiedOnUtc = DateTime.UtcNow;
     }
 
-    public static Password Create(string value) => new Password(value);
+    public static PublicKey Create(string value) => new PublicKey(value);
 
-    public Password Load(
+    public PublicKey Load(
         string value,
         DateTime lastModifiedOnUtc
     )

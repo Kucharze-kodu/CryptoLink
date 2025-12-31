@@ -1,14 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>0d32787f-fcea-4d3e-8a10-6f76c6224c68</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptoLink.WebUI.Client\CryptoLink.WebUI.Client.csproj" />
+
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.20" />
+
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CryptoLink.Application\CryptoLink.Application.csproj" />
+    <ProjectReference Include="..\..\CryptoLink.Architecture\CryptoLink.Architecture.csproj" />
+    <ProjectReference Include="..\..\CryptoLink.Domain\CryptoLink.Domain.csproj" />
+    <ProjectReference Include="..\CryptoLink.WebUI.Client\CryptoLink.WebUI.Client.csproj" />
   </ItemGroup>
 
 </Project>
