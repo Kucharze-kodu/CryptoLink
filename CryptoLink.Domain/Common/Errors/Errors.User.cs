@@ -6,9 +6,9 @@ public static partial class Errors
 {
     public static class User
     {
-        public static Error DuplicateEmail = Error.Conflict(
-            code: "User.DuplicateEmail",
-            description: "User with that email exists");
+        public static Error DuplicateName = Error.Conflict(
+            code: "User.DuplicateName",
+            description: "User with that name exists");
 
         public static Error NotFound = Error.NotFound(
             code: "User.NotFound",
@@ -17,9 +17,12 @@ public static partial class Errors
         public static Error InvalidCredentials = Error.Conflict(
             code: "User.InvalidCredentials",
             description: "Invalid credentials");
-        
-        public static Error InvalidToken = Error.Conflict(
-            code: "User.InvalidToken",
-            description: $"The provided token is invalid or has expired or is already used");
+
+        public static Error InvalidTokenPGP = Error.Conflict(
+            code: "User.InvalidTokenPGP",
+            description: $"Invalid PGP Public Key format.");
+
+
+
     }
 }

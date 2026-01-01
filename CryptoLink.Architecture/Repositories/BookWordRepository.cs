@@ -72,7 +72,7 @@ namespace CryptoLink.Architecture.Repositories
         {
             if( howMany <= 0)
             {
-                return null;
+                return "404";
             }
 
             var randomWords = await _dbContext.BookWords

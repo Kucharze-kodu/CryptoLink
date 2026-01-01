@@ -19,10 +19,5 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="Contracts\Users\" />
-    <Folder Include="Features\Users\" />
-  </ItemGroup>
 
 </Project>

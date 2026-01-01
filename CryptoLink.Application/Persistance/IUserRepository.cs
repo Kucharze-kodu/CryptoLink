@@ -9,7 +9,7 @@ namespace CryptoLink.Application.Persistance
 {
     public interface IUserRepository
     {
-        Task<string> CreateAccount(string email, string publicKey, CancellationToken cancellationToken = default);
+        Task AddUserAsync(User user, CancellationToken cancellationToken = default);
         Task<string> Challenge(string email, CancellationToken cancellationToken = default);
 
         Task VerifyChallenge(string email, string challengeResponse, CancellationToken cancellationToken = default);

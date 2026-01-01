@@ -18,11 +18,11 @@ namespace CryptoLink.Architecture.Repositories
             _dbContext=dbContext;
         }
 
-        public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<User?> GetByEmailAsync(string name, CancellationToken cancellationToken = default)
         {
             var user = await _dbContext
                 .Users
-                .FirstOrDefaultAsync(r => r.Email == email, cancellationToken);
+                .FirstOrDefaultAsync(r => r.Name == name, cancellationToken);
 
             return user;
         }
@@ -43,18 +43,18 @@ namespace CryptoLink.Architecture.Repositories
                 .AddAsync(user, cancellationToken);
         }
 
-        public Task<bool> AnyUserAsync(string email, CancellationToken cancellationToken = default)
+        public Task<bool> AnyUserAsync(string name, CancellationToken cancellationToken = default)
         {
             return _dbContext
                 .Users
-                .AnyAsync(r => r.Email == email, cancellationToken);
+                .AnyAsync(r => r.Name == name, cancellationToken);
         }
 
-        public async Task<int?> GetIdByEmailAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<int?> GetIdByEmailAsync(string name, CancellationToken cancellationToken = default)
         {
             var userId = await _dbContext
                 .Users
-                .Where(r => r.Email == email)
+                .Where(r => r.Name == name)
                 .Select(r => r.Id.Value)
                 .FirstOrDefaultAsync(cancellationToken);
 

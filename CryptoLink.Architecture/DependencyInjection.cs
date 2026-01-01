@@ -1,9 +1,11 @@
 ﻿using CryptoLink.Application.Persistance;
+using CryptoLink.Application.Persistance.CryptoLink.Application.Common.Interfaces;
 using CryptoLink.Application.Utils;
 using CryptoLink.Architecture.Authentication;
 using CryptoLink.Architecture.Database;
 using CryptoLink.Architecture.Repositories;
 using CryptoLink.Architecture.Utils;
+using CryptoLink.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,13 +25,15 @@ namespace CryptoLink.Architecture
                         r.MigrationsAssembly(typeof(DependencyInjection).Assembly.ToString())));
 
 
-
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookWordRepository, BookWordRepository>();
             services.AddScoped<ILinkExtendedRepository, LinkExtendedRepository>();
-            services.AddScoped<IUserContext, UserContext>();
 
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserContext, UserContext>();
+            services.AddScoped<ICryptoService, PgpCryptoService>();
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheService, MemoryCacheService>();
 
 
             services.AddAuthentication(x =>
