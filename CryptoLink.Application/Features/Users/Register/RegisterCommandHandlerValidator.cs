@@ -12,9 +12,12 @@ namespace CryptoLink.Application.Features.Users.Register
     {
         public RegisterCommandHandlerValidator()
         {
-            RuleFor(r => r.PublicKey)
+            RuleFor(r => r.UserName)
                 .NotEmpty()
                 .WithMessage("Public key is required");
+            RuleFor(r => r.DecryptedToken)
+                .NotEmpty()
+                .WithMessage("Decrypted Token is invalid");
         }
     }
 }

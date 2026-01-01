@@ -9,13 +9,13 @@ using System.Text.RegularExpressions;
 
 namespace CryptoLink.Application.Features.Users.RegisterInit
 {
-    public class RegisterInitCommnandHandler : ICommandHandler<RegisterInitCommnand, RegisterInitResponse>
+    public class RegisterInitCommandHandler : ICommandHandler<RegisterInitCommand, RegisterInitResponse>
     {
         private readonly IUserRepository _userRepository;
         private readonly ICryptoService _cryptoService;
         private readonly ICacheService _cache;
 
-        public RegisterInitCommnandHandler(
+        public RegisterInitCommandHandler(
             IUserRepository userRepository,
             ICryptoService cryptoService,
             ICacheService cache)
@@ -25,7 +25,7 @@ namespace CryptoLink.Application.Features.Users.RegisterInit
             _cache = cache;
         }
 
-        public async Task<ErrorOr<RegisterInitResponse>> Handle(RegisterInitCommnand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<RegisterInitResponse>> Handle(RegisterInitCommand request, CancellationToken cancellationToken)
         {
             if (!_cryptoService.ValidatePublicKey(request.PublicKey))
             {

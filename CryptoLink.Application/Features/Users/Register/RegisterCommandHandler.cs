@@ -1,10 +1,11 @@
 ﻿using CryptoLink.Application.Common.Messaging;
 using CryptoLink.Application.Contracts.Users;
 using CryptoLink.Application.Persistance;
+using CryptoLink.Application.Persistance.CryptoLink.Application.Common.Interfaces;
 using CryptoLink.Domain.Aggregates.Users;
+using CryptoLink.Domain.Common.Cache;
 using CryptoLink.Domain.Common.Errors;
 using ErrorOr;
-using System.Text.RegularExpressions;
 
 
 
@@ -13,55 +14,54 @@ namespace CryptoLink.Application.Features.Users.Register
     public class RegisterUserCommandHandler : ICommandHandler<RegisterCommand, RegisterResponse>
     {
         private readonly IUserRepository _userRepository;
+        private readonly ICacheService _cache;
         private readonly ICryptoService _cryptoService;
 
-        public RegisterUserCommandHandler(IUserRepository userRepository, ICryptoService cryptoService)
+        public RegisterUserCommandHandler(
+            IUserRepository userRepository,
+            ICacheService cache,
+            ICryptoService cryptoService)
         {
             _userRepository = userRepository;
+            _cache = cache;
             _cryptoService = cryptoService;
         }
 
-
         public async Task<ErrorOr<RegisterResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            if (!_cryptoService.ValidatePublicKey(request.PublicKey))
+            string cacheKey = $"reg_pending_{request.UserName}";
+
+            var pendingReg = await _cache.GetAsync<PendingRegistrationModel>(cacheKey);
+
+            if (pendingReg == null)
             {
-                return Errors.User.InvalidTokenPGP;
+                throw new TimeoutException("Registration session expired or invalid.");
             }
 
-            var rawUser = _cryptoService.ExtractUserIdFromPublicKey(request.PublicKey);
 
-            string name = "Unknown";
-
-            if (!string.IsNullOrEmpty(rawUser))
+            if (pendingReg.ChallengeToken != request.DecryptedToken.Trim())
             {
-                var match = Regex.Match(rawUser, @"^(.*?)<([^>]+)>$");
-
-                if (match.Success)
-                {
-                    name = match.Groups[1].Value.Trim();
-                }
-                else
-                {
-                    return Errors.User.InvalidTokenPGP;
-                }
+                return Errors.User.SessionRegisterExpired;
             }
 
-            if (await _userRepository.AnyUserAsync(name, cancellationToken))
+
+            if (await _userRepository.AnyUserAsync(request.UserName))
             {
                 return Errors.User.DuplicateName;
             }
 
+            var newUser = User.Create(
+                    request.UserName,
+                    pendingReg.PublicKey
+                );
 
-            // 3. Zapis użytkownika z kluczem publicznym
-            User user = User.Create(
-                name,
-                request.PublicKey
-            );
 
-            await _userRepository.AddUserAsync(user, cancellationToken);
+            await _userRepository.AddUserAsync(newUser);
+            await _cache.RemoveAsync(cacheKey);
 
-            return new RegisterResponse("You have register to us");
+            return new RegisterResponse("User registered successfully.");
         }
     }
 }
+
+        

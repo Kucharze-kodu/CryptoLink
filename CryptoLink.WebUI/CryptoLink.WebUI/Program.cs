@@ -68,6 +68,8 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);
 
+
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

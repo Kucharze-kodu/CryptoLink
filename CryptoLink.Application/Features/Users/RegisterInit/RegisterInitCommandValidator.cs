@@ -3,9 +3,9 @@
 
 namespace CryptoLink.Application.Features.Users.RegisterInit
 {
-    public class RegisterInitCommnandValidator : AbstractValidator<RegisterInitCommnand>
+    public class RegisterInitCommandValidator : AbstractValidator<RegisterInitCommand>
     {
-        public RegisterInitCommnandValidator()
+        public RegisterInitCommandValidator()
         {
             RuleFor(r => r.PublicKey)
                 .NotEmpty()

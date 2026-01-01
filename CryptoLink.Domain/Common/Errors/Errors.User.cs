@@ -14,14 +14,13 @@ public static partial class Errors
             code: "User.NotFound",
             description: "User not found");
 
-        public static Error InvalidCredentials = Error.Conflict(
-            code: "User.InvalidCredentials",
-            description: "Invalid credentials");
-
         public static Error InvalidTokenPGP = Error.Conflict(
             code: "User.InvalidTokenPGP",
             description: $"Invalid PGP Public Key format.");
 
+        public static Error SessionRegisterExpired = Error.Conflict(
+            code: "User.SessionRegisterExpired",
+            description: $"Registration session expired or invalid.");
 
 
     }

@@ -1,0 +1,40 @@
+﻿@page "/register"
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<h3>Rejestracja PGP</h3>
+
+@if (step == 1)
+{
+    <div class="form-group">
+        <label>Nazwa użytkownika</label>
+        <input @bind="username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Twój Klucz Publiczny PGP</label>
+        <textarea @bind="publicKey" class="form-control" rows="5"></textarea>
+    </div>
+    <button class="btn btn-primary" @onclick="HandleInitiate">Dalej</button>
+}
+else if (step == 2)
+{
+    <div class="alert alert-info">
+        <strong>Zadanie dla Ciebie:</strong> Odszyfruj poniższą wiadomość swoim kluczem prywatnym i wklej wynik poniżej.
+    </div>
+
+    <div class="form-group">
+        <label>Zaszyfrowany Challenge (od serwera)</label>
+        <textarea readonly class="form-control" rows="5" value="@encryptedMessage"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Odszyfrowany Token (Wklej tutaj)</label>
+        <input @bind="decryptedToken" class="form-control" placeholder="np. guid-token..." />
+    </div>
+
+    <button class="btn btn-success" @onclick="HandleComplete">Zarejestruj się</button>
+}
+
