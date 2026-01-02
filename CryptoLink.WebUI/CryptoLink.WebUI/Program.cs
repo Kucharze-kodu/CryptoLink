@@ -2,7 +2,7 @@ using CryptoLink.Application;
 using CryptoLink.Architecture;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
-using GameGather.Api.Modules;
+using CryptoLink.WebUI.Controllers.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 

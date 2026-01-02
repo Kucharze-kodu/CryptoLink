@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GameGather.Api.Common;
+namespace CryptoLink.WebUI.Controllers.Common;
 
 public static class HttpResultsExtensions
 {
