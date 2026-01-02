@@ -56,8 +56,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             }
             catch (Exception ex)
             {
-                errorMessage = "Weryfikacja nieudana. Sprawdź czy poprawnie odszyfrowałeś treść.";
-                // Nie czyścimy tokenu, żeby użytkownik mógł poprawić literówkę bez wklejania od nowa
+                errorMessage = "Verification failed. Please check if you decrypted the content correctly.";
             }
         }
 
@@ -67,7 +66,6 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             publicKey = string.Empty;
             encryptedMessage = string.Empty;
             decryptedToken = string.Empty;
-            // username zostawiamy, może się przydać do logowania
         }
     }
 }

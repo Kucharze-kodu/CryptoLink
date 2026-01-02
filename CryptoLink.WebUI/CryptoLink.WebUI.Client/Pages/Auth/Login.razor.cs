@@ -36,7 +36,6 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
                 return;
             }
 
-            var cleanToken = decryptedToken.Trim();
 
             try
             {
@@ -46,7 +45,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             }
             catch (Exception)
             {
-                Console.WriteLine("Błąd weryfikacji!");
+                Console.WriteLine("Error veryfy");
             }
         }
     }
