@@ -40,7 +40,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
 
             try
             {
-                await AuthService.CompleteLoginAsync(username, decryptedToken);
+                await AuthService.CompleteLoginAsync(username, cleanToken);
 
                 Navigation.NavigateTo("/", forceLoad: true);
             }
