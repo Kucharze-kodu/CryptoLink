@@ -60,7 +60,7 @@ namespace CryptoLink.Application.Features.Users.LoginInit
             await _cache.SetAsync(
                     $"reg_pending_{request.UserName}",
                     pendingRegistration,
-                    TimeSpan.FromMinutes(10)); // Dajemy 10 min 
+                    TimeSpan.FromMinutes(10)); // Set 10-minute expiration
 
             return new LoginInitResponse(encryptedMessage);
         }
