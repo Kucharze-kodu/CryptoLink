@@ -54,10 +54,10 @@ public class PgpCryptoService : ICryptoService
 
                 foreach (PgpPublicKey key in keys.PublicKeys)
                 {
-                    // GetUserIds() zwraca iterator stringów
+                    // GetUserIds() returns an iterator of strings
                     foreach (string userId in key.GetUserIds())
                     {
-                        // Zwracamy pierwszy napotkany identyfikator
+                        // Return the first non-empty user identifier encountered
                         if (!string.IsNullOrWhiteSpace(userId))
                         {
                             return userId;
