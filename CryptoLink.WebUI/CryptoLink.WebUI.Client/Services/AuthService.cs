@@ -19,14 +19,13 @@ public class AuthService
 
         if (response.IsSuccessStatusCode)
         {
-            var result = await response.Content.ReadFromJsonAsync<RegisterInitResponse>();
+            var result = await response.Content.ReadFromJsonAsync<InitResponse>();
 
 
             return result.Challenge;
         }
         else
         {
-            // Obsługa błędu
             var errorContent = await response.Content.ReadAsStringAsync();
             throw new Exception($"Błąd serwera: {errorContent}");
         }
@@ -37,6 +36,36 @@ public class AuthService
         var command = new { Username = username, DecryptedToken = decryptedToken };
 
         var response = await _httpClient.PostAsJsonAsync("api/auth/register/complete", command);
+        response.EnsureSuccessStatusCode();
+    }
+
+
+    public async Task<string> InitiateLoginAsync(string username)
+    {
+        var command = new LoginInitCommand(username);
+
+        var response = await _httpClient.PostAsJsonAsync("api/auth/login/init", command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<InitResponse>();
+
+
+            return result.Challenge;
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Błąd serwera: {errorContent}");
+        }
+    }
+
+    public async Task CompleteLoginAsync(string username, string decryptedToken)
+    {
+        var command = new { Username = username, DecryptedToken = decryptedToken };
+
+        var response = await _httpClient.PostAsJsonAsync("api/auth/login/complete", command);
+
         response.EnsureSuccessStatusCode();
     }
 }

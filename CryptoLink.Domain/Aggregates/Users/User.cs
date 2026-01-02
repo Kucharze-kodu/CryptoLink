@@ -10,8 +10,6 @@ public sealed class User : AggregateRoot<UserId>
     public string Name { get; set; }
     public string PublicKey { get; set; }
 
-    public LinkExtended LinksExtended { get; set; } = null;
-
 
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? VerifiedOnUtc { get; private set; }

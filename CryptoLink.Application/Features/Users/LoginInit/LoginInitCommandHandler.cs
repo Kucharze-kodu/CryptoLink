@@ -36,7 +36,7 @@ namespace CryptoLink.Application.Features.Users.LoginInit
 
             User? user = await _userRepository.GetByNameAsync(request.UserName, cancellationToken);
 
-            if (user is not null)
+            if (user is null)
             {
                 return Errors.User.NotFound;
             }    

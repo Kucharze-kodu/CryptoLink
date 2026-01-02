@@ -1,6 +1,6 @@
 ﻿
 
-namespace CryptoLink.Application.Contracts.Users
+namespace CryptoLink.WebUI.Client.Services.Dto
 {
     public class LoginResponse
     {

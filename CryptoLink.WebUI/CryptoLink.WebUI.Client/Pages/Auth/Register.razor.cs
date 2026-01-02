@@ -44,16 +44,12 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
                 return;
             }
 
-            // 3. WYCZYSZCZENIE: Tokeny często kopiują się ze spacją na końcu!
-            // To jest najważniejszy moment czyszczenia przed wysyłką.
             var cleanToken = decryptedToken.Trim();
 
             try
             {
                 await AuthService.CompleteRegisterAsync(username, cleanToken);
 
-                // 4. Wyczyszczenie wrażliwych danych z pamięci przed nawigacją
-                // (Opcjonalne, bo komponent i tak zniknie, ale dobra praktyka security)
                 ClearSensitiveData();
 
                 Navigation.NavigateTo("/login");
