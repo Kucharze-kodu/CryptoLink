@@ -21,6 +21,10 @@ public class AuthService
         {
             var result = await response.Content.ReadFromJsonAsync<InitResponse>();
 
+            if (result == null)
+            {
+                throw new Exception("Failed to deserialize response from server.");
+            }
 
             return result.Challenge;
         }
@@ -50,6 +54,10 @@ public class AuthService
         {
             var result = await response.Content.ReadFromJsonAsync<InitResponse>();
 
+            if (result == null)
+            {
+                throw new Exception("Failed to deserialize response from server.");
+            }
 
             return result.Challenge;
         }
