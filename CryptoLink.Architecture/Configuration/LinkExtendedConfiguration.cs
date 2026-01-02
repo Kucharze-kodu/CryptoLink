@@ -1,5 +1,5 @@
 ﻿using CryptoLink.Domain.Aggregates.LinkExtendeds;
-// Make sure this path is correct if you changed the folder typo
+// Note: The namespace below has a typo: "ValueObcjects" instead of "ValueObjects"
 using CryptoLink.Domain.Aggregates.LinkExtendeds.ValueObcjects;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
 using Microsoft.EntityFrameworkCore;
