@@ -23,7 +23,7 @@ public class AuthService
 
             if (result == null)
             {
-                throw new Exception("Failed to deserialize response from server.");
+                throw new InvalidOperationException("Failed to deserialize InitResponse from register endpoint.");
             }
 
             return result.Challenge;
@@ -56,7 +56,7 @@ public class AuthService
 
             if (result == null)
             {
-                throw new Exception("Failed to deserialize response from server.");
+                throw new InvalidOperationException("Failed to deserialize InitResponse from login endpoint.");
             }
 
             return result.Challenge;
