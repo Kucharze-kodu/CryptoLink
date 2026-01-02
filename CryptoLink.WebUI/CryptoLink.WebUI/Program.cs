@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
-// Swagger (opcjonalnie, przydatne do testów)
+// Swagger (optional, useful for testing)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -62,12 +62,12 @@ app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapowanie Endpointów
+// Mapowanie Endpointï¿½w
 // ENDPOINTS
 app.AddAuthenticationEndpoints();
 // END ENDPOINTS
 
-// Mapowanie komponentów Blazor
+// Mapowanie komponentï¿½w Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);
