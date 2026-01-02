@@ -9,7 +9,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string publicKey = string.Empty;
         private string encryptedMessage = string.Empty;
         private string decryptedToken = string.Empty;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
+        private string errorMessage = string.Empty; // For displaying errors in UI
 
         private async Task HandleInitiate()
         {
@@ -57,7 +57,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             catch (Exception ex)
             {
                 errorMessage = "Weryfikacja nieudana. Sprawdź czy poprawnie odszyfrowałeś treść.";
-                // Nie czyścimy tokenu, żeby użytkownik mógł poprawić literówkę bez wklejania od nowa
+                // Don't clear the token, so the user can fix a typo without pasting again
             }
         }
 
@@ -67,7 +67,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             publicKey = string.Empty;
             encryptedMessage = string.Empty;
             decryptedToken = string.Empty;
-            // username zostawiamy, może się przydać do logowania
+            // username is kept, may be useful for login
         }
     }
 }

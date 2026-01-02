@@ -7,7 +7,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string username;
         private string encryptedMessage;
         private string decryptedToken;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
+        private string errorMessage = string.Empty; // For displaying errors in UI
 
 
 
@@ -15,13 +15,13 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         {
             try
             {
-                // KROK 1: Pobierz zagadkę
+                // STEP 1: Fetch the challenge
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
                 step = 2;
             }
             catch (Exception ex)
             {
-                // Np. brak użytkownika w bazie
+                // E.g., user not found in database
                 Console.WriteLine(ex.Message);
             }
         }

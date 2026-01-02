@@ -1,5 +1,5 @@
 ﻿using CryptoLink.Domain.Aggregates.LinkExtendeds;
-// Upewnij się, że ta ścieżka jest poprawna, jeśli zmieniłeś literówkę w folderach
+// Make sure this path is correct if you changed the folder typo
 using CryptoLink.Domain.Aggregates.LinkExtendeds.ValueObcjects;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
 using Microsoft.EntityFrameworkCore;

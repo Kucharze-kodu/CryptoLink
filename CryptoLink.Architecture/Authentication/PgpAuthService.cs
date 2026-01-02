@@ -16,7 +16,7 @@ public class PgpCryptoService : ICryptoService
             var encryptionKeys = new EncryptionKeys(publicKeyStream);
             var pgp = new PGP(encryptionKeys);
 
-            // Szyfrowanie challenge'u kluczem publicznym użytkownika
+            // Encrypt challenge with user's public key
             await pgp.EncryptAsync(inputStream, outputStream, armor: true, withIntegrityCheck: true);
 
             outputStream.Seek(0, SeekOrigin.Begin);
@@ -54,10 +54,10 @@ public class PgpCryptoService : ICryptoService
 
                 foreach (PgpPublicKey key in keys.PublicKeys)
                 {
-                    // GetUserIds() zwraca iterator stringów
+                    // GetUserIds() returns an iterator of strings
                     foreach (string userId in key.GetUserIds())
                     {
-                        // Zwracamy pierwszy napotkany identyfikator
+                        // Return the first encountered identifier
                         if (!string.IsNullOrWhiteSpace(userId))
                         {
                             return userId;
