@@ -1,5 +1,4 @@
 ﻿using CryptoLink.Application.Common.Behavior;
-using CryptoLink.Application.Configurations;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,6 @@ namespace CryptoLink.Application
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            services.ConfigureOptions<PasswordOptionsSetup>();
 
             return services;
         }

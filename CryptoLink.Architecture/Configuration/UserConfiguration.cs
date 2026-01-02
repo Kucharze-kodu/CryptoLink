@@ -25,36 +25,14 @@ namespace CryptoLink.Architecture.Configuration
                     value => UserId.Create(value))
                 .ValueGeneratedOnAdd();
 
-            // Firstname
+            // Name
             builder
-                .Property(r => r.FirstName)
-                .HasMaxLength(100);
-
-            // Lastname
-            builder
-                .Property(r => r.LastName)
-                .HasMaxLength(100);
-
-            // Email
-            builder
-                .Property(r => r.Email)
+                .Property(r => r.Name)
                 .HasMaxLength(255);
 
             builder
-                .HasIndex(r => r.Email)
+                .HasIndex(r => r.Name)
                 .IsUnique();
-
-
-
-            // PublicKey
-            builder
-                .OwnsOne(r => r.PublicKey, publicKey =>
-                {
-                    publicKey.ToTable("PublicKey");
-                    publicKey.Property(x => x.Value).HasColumnName("Value");
-                    publicKey.Property(x => x.LastModifiedOnUtc).HasColumnName("LastModifiedOnUtc");
-                });
-
 
             // Ban
             builder

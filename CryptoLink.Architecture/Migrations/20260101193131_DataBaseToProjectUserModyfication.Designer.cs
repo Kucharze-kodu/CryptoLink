@@ -3,6 +3,7 @@ using System;
 using CryptoLink.Architecture.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CryptoLink.Architecture.Migrations
 {
     [DbContext(typeof(CryptoLinkDbContext))]
-    partial class CryptoLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260101193131_DataBaseToProjectUserModyfication")]
+    partial class DataBaseToProjectUserModyfication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,7 +90,7 @@ namespace CryptoLink.Architecture.Migrations
                     b.Property<DateTime>("LastModifiedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("LinkExtendedId")
+                    b.Property<int>("LinksExtendedId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -109,7 +112,7 @@ namespace CryptoLink.Architecture.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LinkExtendedId");
+                    b.HasIndex("LinksExtendedId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -119,9 +122,11 @@ namespace CryptoLink.Architecture.Migrations
 
             modelBuilder.Entity("CryptoLink.Domain.Aggregates.Users.User", b =>
                 {
-                    b.HasOne("CryptoLink.Domain.Aggregates.LinkExtendeds.LinkExtended", null)
+                    b.HasOne("CryptoLink.Domain.Aggregates.LinkExtendeds.LinkExtended", "LinksExtended")
                         .WithMany("Users")
-                        .HasForeignKey("LinkExtendedId");
+                        .HasForeignKey("LinksExtendedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsOne("CryptoLink.Domain.Aggregates.Users.ValueObjects.Ban", "Ban", b1 =>
                         {
@@ -150,6 +155,8 @@ namespace CryptoLink.Architecture.Migrations
                         });
 
                     b.Navigation("Ban");
+
+                    b.Navigation("LinksExtended");
                 });
 
             modelBuilder.Entity("CryptoLink.Domain.Aggregates.LinkExtendeds.LinkExtended", b =>

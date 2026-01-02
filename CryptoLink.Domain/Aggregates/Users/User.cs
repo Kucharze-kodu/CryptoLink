@@ -7,12 +7,8 @@ namespace CryptoLink.Domain.Aggregates.Users;
 
 public sealed class User : AggregateRoot<UserId>
 {
-    public string Email { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public PublicKey PublicKey { get; set; }
-
-    public LinkExtended LinksExtended { get; set; } = null;
+    public string Name { get; set; }
+    public string PublicKey { get; set; }
 
 
     public DateTime CreatedOnUtc { get; private set; }
@@ -28,37 +24,25 @@ public sealed class User : AggregateRoot<UserId>
 
     private User(
         UserId id,
-        string firstName,
-        string lastName,
-        string email,
-        string password,
-        DateTime birthday) : base(id)
+        string name,
+        string publicKey) : base(id)
     {
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        PublicKey = PublicKey.Create(password);
+        Name = name;
+        PublicKey = publicKey;
         CreatedOnUtc = DateTime.UtcNow;
         LastModifiedOnUtc = DateTime.UtcNow;
         Role = Role.User;
     }
 
     public static User Create(
-        string firstName,
-        string lastName,
-        string email,
-        string password,
-        DateTime birthday,
-        string verifyEmailUrl
+        string name,
+        string publicKey
     )
     {
         var User = new User(
             default,
-            firstName,
-            lastName,
-            email,
-            password,
-            birthday);
+            name,
+            publicKey);
 
         return User;
     }
@@ -67,8 +51,8 @@ public sealed class User : AggregateRoot<UserId>
         UserId id,
         string firstName,
         string lastName,
-        string email,
-        PublicKey publicKey,
+        string name,
+        string publicKey,
         DateTime createdOnUtc,
         DateTime? verifiedOnUtc,
         DateTime lastModifiedOnUtc,
@@ -77,9 +61,7 @@ public sealed class User : AggregateRoot<UserId>
     )
     {
         Id = id;
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
+        Name = name;
         PublicKey = publicKey;
         CreatedOnUtc = createdOnUtc;
         VerifiedOnUtc = verifiedOnUtc;
