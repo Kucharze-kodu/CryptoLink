@@ -16,15 +16,18 @@ namespace CryptoLink.Application.Features.Users.Register
         private readonly IUserRepository _userRepository;
         private readonly ICacheService _cache;
         private readonly ICryptoService _cryptoService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterUserCommandHandler(
             IUserRepository userRepository,
             ICacheService cache,
-            ICryptoService cryptoService)
+            ICryptoService cryptoService,
+            IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _cache = cache;
             _cryptoService = cryptoService;
+            _unitOfWork=unitOfWork;
         }
 
         public async Task<ErrorOr<RegisterResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -58,6 +61,8 @@ namespace CryptoLink.Application.Features.Users.Register
 
             await _userRepository.AddUserAsync(newUser);
             await _cache.RemoveAsync(cacheKey);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
 
             return new RegisterResponse("User registered successfully.");
         }
