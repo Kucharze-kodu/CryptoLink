@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using CryptoLink.WebUI.Client.Services.Command;
+using CryptoLink.WebUI.Client.Services.Dto;
+using System.Net.Http.Json;
 
 public class AuthService
 {
@@ -11,13 +13,23 @@ public class AuthService
 
     public async Task<string> InitiateRegisterAsync(string username, string publicKey)
     {
-        var command = new { Username = username, PublicKey = publicKey };
+        var command = new RegisterInitCommand(username, publicKey);
 
         var response = await _httpClient.PostAsJsonAsync("api/auth/register/init", command);
-        response.EnsureSuccessStatusCode();
 
-        // API zwraca zaszyfrowany ciąg znaków
-        return await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<RegisterInitResponse>();
+
+
+            return result.Challenge;
+        }
+        else
+        {
+            // Obsługa błędu
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Błąd serwera: {errorContent}");
+        }
     }
 
     public async Task CompleteRegisterAsync(string username, string decryptedToken)

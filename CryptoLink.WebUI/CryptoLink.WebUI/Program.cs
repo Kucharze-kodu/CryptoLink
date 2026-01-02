@@ -1,26 +1,18 @@
-using CryptoLink.WebUI.Client.Pages;
-using CryptoLink.WebUI.Components;
 using CryptoLink.Application;
 using CryptoLink.Architecture;
+using CryptoLink.WebUI.Client.Pages;
+using CryptoLink.WebUI.Components;
+using GameGather.Api.Modules;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowAllOrigins",
-            builder =>
-            {
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-    });
 
-    // Add services to the container.
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddRazorComponents()
+    .AddInteractiveWebAssemblyComponents();
+    builder.Services.AddControllers();
+
 
     //CORS
     builder.Services.AddCors(options =>
@@ -40,9 +32,13 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
+// Swagger (opcjonalnie, przydatne do testów)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-    // Add services to the container.
-    builder.Services.AddRazorComponents()
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
@@ -55,24 +51,25 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseCors("AllowAllOrigins");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Mapowanie Endpointów
+// ENDPOINTS
+app.AddAuthenticationEndpoints();
+// END ENDPOINTS
+
+// Mapowanie komponentów Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);
 
-
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseCors("AllowAllOrigins");
 app.Run();

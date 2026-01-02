@@ -5,6 +5,7 @@ using CryptoLink.Application.Persistance.CryptoLink.Application.Common.Interface
 using CryptoLink.Domain.Common.Cache;
 using CryptoLink.Domain.Common.Errors;
 using ErrorOr;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CryptoLink.Application.Features.Users.RegisterInit
@@ -27,13 +28,20 @@ namespace CryptoLink.Application.Features.Users.RegisterInit
 
         public async Task<ErrorOr<RegisterInitResponse>> Handle(RegisterInitCommand request, CancellationToken cancellationToken)
         {
-            if (!_cryptoService.ValidatePublicKey(request.PublicKey))
-            {
-                return Errors.User.InvalidTokenPGP;
-            }
 
-            var rawUser = _cryptoService.ExtractUserIdFromPublicKey(request.PublicKey);
+            var key = request.PublicKey
+                .Replace("-----BEGIN PGP PUBLIC KEY BLOCK-----", "")
+                .Replace("-----END PGP PUBLIC KEY BLOCK-----", "")
+                .Split('\n')
+                .Where(line =>
+                    !line.StartsWith("Comment:") &&
+                    !line.StartsWith("="))
+                .Select(line => line.Trim())
+                .Where(line => !string.IsNullOrWhiteSpace(line));
 
+            var cleanedKey = string.Concat(key);
+
+            var rawUser = _cryptoService.ExtractUserIdFromPublicKey(cleanedKey);
             string name = "Unknown";
 
             if (!string.IsNullOrEmpty(rawUser))
@@ -50,25 +58,38 @@ namespace CryptoLink.Application.Features.Users.RegisterInit
                 }
             }
 
+            if (!_cryptoService.ValidatePublicKey(cleanedKey))
+            {
+                return Errors.User.InvalidTokenPGP;
+            }
+
+
             if (await _userRepository.AnyUserAsync(name, cancellationToken))
             {
                 return Errors.User.DuplicateName;
             }
 
-            var (token, encryptedMessage) = await _cryptoService.GenerateChallengeAsync(request.PublicKey);
+            var (token, encryptedMessage) = await _cryptoService.GenerateChallengeAsync(cleanedKey);
 
             var pendingRegistration = new PendingRegistrationModel
             {
-                PublicKey = request.PublicKey,
+                PublicKey = cleanedKey,
                 ChallengeToken = token
             };
 
-            await _cache.SetAsync(
+            encryptedMessage = string.Join(Environment.NewLine,
+                encryptedMessage
+                    .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                    .Where(line =>
+                        !line.StartsWith("Version:"))
+                    .Select(line => line.Trim())
+            );
+
+                        await _cache.SetAsync(
                 $"reg_pending_{request.UserName}",
                 pendingRegistration,
-                TimeSpan.FromMinutes(10)); // Dajemy 10 min na dokończenie rejestracji
+                TimeSpan.FromMinutes(10)); // Dajemy 10 min 
 
-            // 5. Zwracamy zaszyfrowaną wiadomość
             return new RegisterInitResponse(encryptedMessage);
         }
     }
