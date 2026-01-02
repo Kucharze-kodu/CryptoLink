@@ -27,7 +27,7 @@ public class AuthService
         else
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Błąd serwera: {errorContent}");
+            throw new Exception($"Server error: {errorContent}");
         }
     }
 
@@ -56,7 +56,7 @@ public class AuthService
         else
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Błąd serwera: {errorContent}");
+            throw new Exception($"Server error: {errorContent}");
         }
     }
 
