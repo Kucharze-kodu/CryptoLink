@@ -5,10 +5,10 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
     public partial class Register
     {
         private int step = 1;
-        private string username = string.Empty;
-        private string publicKey = string.Empty;
-        private string encryptedMessage = string.Empty;
-        private string decryptedToken = string.Empty;
+        private string username;
+        private string publicKey;
+        private string encryptedMessage;
+        private string decryptedToken;
         private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
 
         private async Task HandleInitiate()
