@@ -15,7 +15,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         {
             try
             {
-                // STEP 1: Fetch the challenge
+                // Step 1: Fetch the challenge
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
                 step = 2;
             }
