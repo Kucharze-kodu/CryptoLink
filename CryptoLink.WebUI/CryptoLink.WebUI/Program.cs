@@ -2,7 +2,7 @@ using CryptoLink.Application;
 using CryptoLink.Architecture;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
-using GameGather.Api.Modules;
+using CryptoLink.WebUI.Controllers.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
-// Swagger (opcjonalnie, przydatne do testów)
+// Swagger (opcjonalnie, przydatne do testï¿½w)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -62,12 +62,12 @@ app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapowanie Endpointów
+// Mapowanie Endpointï¿½w
 // ENDPOINTS
 app.AddAuthenticationEndpoints();
 // END ENDPOINTS
 
-// Mapowanie komponentów Blazor
+// Mapowanie komponentï¿½w Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);

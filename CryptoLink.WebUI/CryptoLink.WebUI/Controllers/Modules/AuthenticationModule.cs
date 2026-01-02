@@ -5,9 +5,9 @@ using CryptoLink.Application.Features.Users.RegisterInit;
 using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using static GameGather.Api.Common.HttpResultsExtensions;
+using static CryptoLink.WebUI.Controllers.Common.HttpResultsExtensions;
 
-namespace GameGather.Api.Modules;
+namespace CryptoLink.WebUI.Controllers.Modules;
 
 public static class AuthenticationModule
 {
