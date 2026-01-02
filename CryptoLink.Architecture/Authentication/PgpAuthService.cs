@@ -14,7 +14,7 @@ public class PgpCryptoService : ICryptoService
         using (var outputStream = new MemoryStream())
         {
             var encryptionKeys = new EncryptionKeys(publicKeyStream);
-            var pgp = new PGP(encryptionKeys);
+            using var pgp = new PGP(encryptionKeys);
 
             // Szyfrowanie challenge'u kluczem publicznym użytkownika
             await pgp.EncryptAsync(inputStream, outputStream, armor: true, withIntegrityCheck: true);
