@@ -2,8 +2,9 @@
 
 namespace CryptoLink.Application.Contracts.Users
 {
-    public class LoginResponse
-    {
-        public string Token { get; set; } = string.Empty;
-    }
+    public class LoginResponse(
+    int Id,
+    string Name,
+    string Token,
+    DateTime TokenExpiresOnUtc);
 }

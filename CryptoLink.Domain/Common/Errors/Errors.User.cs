@@ -18,8 +18,8 @@ public static partial class Errors
             code: "User.InvalidTokenPGP",
             description: $"Invalid PGP Public Key format.");
 
-        public static Error SessionRegisterExpired = Error.Conflict(
-            code: "User.SessionRegisterExpired",
+        public static Error SessionTokenExpired = Error.Conflict(
+            code: "User.SessionTokenExpired",
             description: $"Registration session expired or invalid.");
 
 

@@ -38,13 +38,13 @@ namespace CryptoLink.Application.Features.Users.Register
 
             if (pendingReg == null)
             {
-                throw new TimeoutException("Registration session expired or invalid.");
+                return Errors.User.SessionTokenExpired;
             }
 
 
             if (pendingReg.ChallengeToken != request.DecryptedToken.Trim())
             {
-                return Errors.User.SessionRegisterExpired;
+                return Errors.User.SessionTokenExpired;
             }
 
 

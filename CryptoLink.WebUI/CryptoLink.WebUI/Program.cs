@@ -3,7 +3,7 @@ using CryptoLink.Architecture;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
 using GameGather.Api.Modules;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 var builder = WebApplication.CreateBuilder(args);

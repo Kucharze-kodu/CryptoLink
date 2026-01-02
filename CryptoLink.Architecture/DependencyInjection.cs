@@ -34,6 +34,7 @@ namespace CryptoLink.Architecture
             services.AddScoped<ICryptoService, PgpCryptoService>();
             services.AddMemoryCache();
             services.AddSingleton<ICacheService, MemoryCacheService>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
 
             services.AddAuthentication(x =>

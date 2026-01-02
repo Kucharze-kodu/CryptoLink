@@ -33,5 +33,27 @@ public static class AuthenticationModule
                 errors => Problem(errors));
         });
 
+
+        app.MapPost("/api/auth/login/init", async (
+            [FromBody] RegisterInitCommand command,
+            [FromServices] ISender sender) =>
+        {
+            var response = await sender.Send(command);
+
+            return response.Match(
+                result => Ok(result),
+                errors => Problem(errors));
+        });
+
+        app.MapPost("/api/auth/login/complete", async (
+            [FromBody] RegisterCommand command,
+            [FromServices] ISender sender) =>
+        {
+            var response = await sender.Send(command);
+
+            return response.Match(
+                result => Ok(result),
+                errors => Problem(errors));
+        });
     }
 }
