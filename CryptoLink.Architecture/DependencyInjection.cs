@@ -69,7 +69,7 @@ namespace CryptoLink.Architecture
              });
 
 
-                 services.ConfigureOptions<JwtOptionsSetup>();
+            services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 

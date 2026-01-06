@@ -3,8 +3,7 @@ using CryptoLink.Architecture;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
 using CryptoLink.WebUI.Controllers.Modules;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using CryptoLink.Architecture.Utils.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -43,6 +42,10 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
+// Apply database migrations
+app.ApplyMigration();
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -66,6 +69,7 @@ app.UseAuthorization();
 // ENDPOINTS
 app.AddAuthenticationEndpoints();
 // END ENDPOINTS
+
 
 // Mapowanie komponentów Blazor
 app.MapRazorComponents<App>()
