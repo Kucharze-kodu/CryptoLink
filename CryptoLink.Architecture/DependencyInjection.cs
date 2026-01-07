@@ -7,6 +7,7 @@ using CryptoLink.Architecture.Repositories;
 using CryptoLink.Architecture.Utils;
 using CryptoLink.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,11 +73,13 @@ namespace CryptoLink.Architecture
             services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBearerOptionsSetup>();
 
-
             services.AddAuthorization();
-
             services.AddHttpContextAccessor();
 
+            // Data Protection configuration
+            services.AddDataProtection()
+                .PersistKeysToDbContext<CryptoLinkDbContext>()
+                .SetApplicationName("CryptoLink");
 
             return services;
         }
