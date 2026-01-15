@@ -24,7 +24,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Queries.GetAllLinkExtend
             var isVerify = _userContext.IsAuthenticated;
             if (isVerify == false)
             {
-                return Errors.BookWord.IsNotAuthorized;
+                return Errors.LinkExtended.IsNotAuthorized;
             }
 
             var id = _userContext.UserId;
