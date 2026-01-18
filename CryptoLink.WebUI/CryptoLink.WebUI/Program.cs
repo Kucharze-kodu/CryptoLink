@@ -1,9 +1,11 @@
 using CryptoLink.Application;
 using CryptoLink.Architecture;
+using CryptoLink.Architecture.Utils.Extensions;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
 using CryptoLink.WebUI.Controllers.Modules;
-using CryptoLink.Architecture.Utils.Extensions;
+using CryptoLink.WebUI.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -31,9 +33,12 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
+
 // Swagger (opcjonalnie, przydatne do testów)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
 
 
 // Add services to the container.

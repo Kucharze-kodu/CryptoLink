@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Authorization
+@using CryptoLink.WebUI.Client.Components.Layout
+@using CryptoLink.WebUI.Client.Components
+
+
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+
+            <Authorizing>
+                <div style="padding: 20px;">Sprawdzanie uprawnień...</div>
+            </Authorizing>
+
+        </AuthorizeRouteView>
+
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+
+    <NotFound>
+        <PageTitle>Nie znaleziono</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="alert alert-danger" role="alert" style="margin: 20px;">
+                <h4 class="alert-heading">404 - Nie znaleziono</h4>
+                <p>Przepraszamy, ale pod tym adresem nic nie ma.</p>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>

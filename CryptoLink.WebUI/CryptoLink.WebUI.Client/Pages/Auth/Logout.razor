@@ -1,0 +1,31 @@
+﻿@page "/logout"
+@using Microsoft.AspNetCore.Components.Authorization
+@using CryptoLink.WebUI.Client.Services
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+
+<p>Trwa wylogowywanie...</p>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Http.PostAsync("api/auth/logout", null);
+
+            if (AuthStateProvider is CustomAuthStateProvider customProvider)
+            {
+                customProvider.NotifyUserLogout();
+            }
+
+            // 3. Przekieruj na stronę główną
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd wylogowania: {ex.Message}");
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

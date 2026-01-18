@@ -1,9 +1,14 @@
 ﻿@page "/login"
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 
 <h3>Logowanie PGP</h3>
+
+<AuthorizeView>
+    <NotAuthorized>
+
 
 @if (step == 1)
 {
@@ -29,3 +34,5 @@ else if (step == 2)
         <button class="btn btn-success" @onclick="HandleVerify">Potwierdź tożsamość</button>
     </div>
 }
+    </NotAuthorized>
+</AuthorizeView>

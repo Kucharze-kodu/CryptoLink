@@ -77,5 +77,7 @@ public static class AuthenticationModule
             httpContext.Response.Cookies.Delete("CookiesAuth");
             return Results.Ok();
         });
+
+
     }
 }

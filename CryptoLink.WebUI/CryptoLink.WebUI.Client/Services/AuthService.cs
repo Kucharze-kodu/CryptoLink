@@ -1,14 +1,18 @@
-﻿using CryptoLink.WebUI.Client.Services.Command;
+﻿using CryptoLink.WebUI.Client.Services;
+using CryptoLink.WebUI.Client.Services.Command;
 using CryptoLink.WebUI.Client.Services.Dto;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 
 public class AuthService
 {
     private readonly HttpClient _httpClient;
+    private readonly AuthenticationStateProvider _authStateProvider;
 
-    public AuthService(HttpClient httpClient)
+    public AuthService(HttpClient httpClient, AuthenticationStateProvider authStateProvider)
     {
         _httpClient = httpClient;
+        _authStateProvider = authStateProvider;
     }
 
     public async Task<string> InitiateRegisterAsync(string username, string publicKey)
@@ -67,5 +71,16 @@ public class AuthService
         var response = await _httpClient.PostAsJsonAsync("api/auth/login/complete", command);
 
         response.EnsureSuccessStatusCode();
+    }
+
+
+    public async Task LogoutUser()
+    {
+        var response = await _httpClient.PostAsync("api/auth/logout", null);
+        response.EnsureSuccessStatusCode();
+        if (_authStateProvider is CustomAuthStateProvider customProvider)
+        {
+            customProvider.NotifyUserLogout();
+        }
     }
 }

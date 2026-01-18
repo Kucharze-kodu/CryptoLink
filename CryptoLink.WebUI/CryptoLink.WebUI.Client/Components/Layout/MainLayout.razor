@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+
+<div class="page">
+
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+
+        <main class="main-container">
+        <div class="top-row px-4 header" style="background-color: #046287;">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="login">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Login
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="register">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+
+                <Authorized>
+                    <div style="display: flex; justify-content: flex-start; margin-right: 2cm;">
+                        <div class="dropdown" style="margin-left: 20px;">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Konto
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+
+                                <li>
+                                    <NavLink class="nav-link" href="logout">
+                                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Wyloguj się
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </main>
+
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

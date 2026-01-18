@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using CryptoLink.WebUI.Client
+@using CryptoLink.WebUI.Client.Components
+@using Microsoft.AspNetCore.Components.Web
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,12 +13,24 @@
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="CryptoLink.WebUI.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+    <link href="CryptoLink.WebUI.styles.css" rel="stylesheet" />
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="InteractiveWebAssembly" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
+
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/login")
+        ? null
+        : InteractiveServer;
+}
