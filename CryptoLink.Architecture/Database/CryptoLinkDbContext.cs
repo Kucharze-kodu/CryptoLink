@@ -14,7 +14,6 @@ namespace CryptoLink.Architecture.Database
         {
         
         }
-
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
         public DbSet<User> Users { get; set; }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CryptoLink.Architecture.Migrations
 {
     [DbContext(typeof(CryptoLinkDbContext))]
-    [Migration("20260107131838_AddDataProtectionAntiForgery")]
+    [Migration("20260106223857_AddDataProtectionAntiForgery")]
     partial class AddDataProtectionAntiForgery
     {
         /// <inheritdoc />
