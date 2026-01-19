@@ -1,7 +1,7 @@
 // infra/main.bicep
 
 // === PARAMETERS ===
-@description('The Azure region for all resources.')
+@description('The Azure region for resource group based resources.')
 param location string = resourceGroup().location
 
 @description('The admin username for the jumphost VM and the database.')
@@ -16,7 +16,7 @@ param sshPublicKey string
 param postgresAdminPassword string
 
 @description('A globally unique name for the Azure Container Registry.')
-// ZMIANA: Wpisujemy nazwę na sztywno, aby mieć pewność, że trafiamy w istniejący zasób
+// WAŻNE: Nazwa musi być stała, bo posiadasz ją globalnie
 param acrName string = 'cryptolinkBRCh169606169600'
 
 @description('The name of the AKS cluster provided by CI/CD pipeline.')
@@ -31,13 +31,14 @@ module networking './modules/networking.bicep' = {
   }
 }
 
-// Ten moduł musi być w pliku ./modules/acr.bicep (treść podałeś poprawnie niżej)
+// === ACR MODULE ===
 module acr './modules/acr.bicep' = {
-  // Zmieniamy nazwę deploymentu dla pewności (omijanie historii)
-  name: 'acr-deployment-fix-v3' 
+  // Nowa nazwa deploymentu, żeby odciąć się od błędów w historii
+  name: 'acr-deployment-production' 
   params: {
-    // KLUCZOWE: Wymuszamy region North Europe, bo tam fizycznie jest Twój ACR
-    location: 'northeurope'
+    // CRITICAL FIX: Wymuszamy region ACR niezależnie od regionu Grupy Zasobów.
+    // Dzięki temu unikamy błędu "AlreadyInUse" przy cross-region deployment.
+    location: 'northeurope' 
     acrName: acrName
   }
 }
@@ -76,7 +77,6 @@ module management './modules/management.bicep' = {
 output acrLoginServer string = acr.outputs.loginServer
 
 @description('The name of the Azure Container Registry resource.')
-// ZMIANA: Pobieramy nazwę dynamicznie z modułu (clean code)
 output acrName string = acr.outputs.name
 
 @description('The name of the AKS cluster.')
