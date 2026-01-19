@@ -33,7 +33,7 @@ module networking './modules/networking.bicep' = {
 module acr './modules/acr.bicep' = {
   name: 'acr-deployment-v2' 
   params: {
-    location: location
+    location: 'northeurope'
     acrName: acrName
   }
 }
