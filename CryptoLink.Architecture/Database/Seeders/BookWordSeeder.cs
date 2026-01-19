@@ -47,7 +47,7 @@ namespace CryptoLink.Architecture.Database.Seeders
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    wordsToAdd.Add(BookWord.Create(categoryName, line.Trim()));
+                    wordsToAdd.Add(BookWord.Create(line.Trim(), categoryName));
                 }
             }
 
