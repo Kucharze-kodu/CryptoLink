@@ -1,3 +1,4 @@
+// infra/modules/acr.bicep
 @description('The Azure region for all resources.')
 param location string
 
@@ -8,17 +9,13 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: acrName
   location: location
   sku: {
-    // ZMIANA: Standard wspiera Identity natywnie i stabilnie.
-    // Jeśli musisz zostać przy Basic, usuń sekcję 'identity' i output 'principalId',
-    // ale wtedy integracja z AKS będzie trudniejsza.
-    name: 'Standard' 
+    name: 'Standard' // Standard wspiera Identity i jest bezpieczniejszy
   }
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    // ZMIANA: Wyłączamy admina zgodnie z Twoją polityką bezpieczeństwa
-    adminUserEnabled: false 
+    adminUserEnabled: false // Zgodnie z polityką
   }
 }
 

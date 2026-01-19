@@ -16,7 +16,8 @@ param sshPublicKey string
 param postgresAdminPassword string
 
 @description('A globally unique name for the Azure Container Registry.')
-param acrName string = 'acr${uniqueString(resourceGroup().id)}'
+// ZMIANA: Wpisujemy nazwę na sztywno, aby mieć pewność, że trafiamy w istniejący zasób
+param acrName string = 'cryptolinkBRCh169606169600'
 
 @description('The name of the AKS cluster provided by CI/CD pipeline.')
 param aksClusterName string = 'aks-cryptolink'
@@ -30,9 +31,12 @@ module networking './modules/networking.bicep' = {
   }
 }
 
+// Ten moduł musi być w pliku ./modules/acr.bicep (treść podałeś poprawnie niżej)
 module acr './modules/acr.bicep' = {
-  name: 'acr-deployment-v2' 
+  // Zmieniamy nazwę deploymentu dla pewności (omijanie historii)
+  name: 'acr-deployment-fix-v3' 
   params: {
+    // KLUCZOWE: Wymuszamy region North Europe, bo tam fizycznie jest Twój ACR
     location: 'northeurope'
     acrName: acrName
   }
@@ -66,19 +70,14 @@ module management './modules/management.bicep' = {
   }
 }
 
-// === ROLE ASSIGNMENTS ===
-
-// Note: ACR pull role assignment should be deployed using the AKS module
-// or a separate module at the appropriate scope to avoid deployment scope issues.
-// The AKS cluster's managed identity should be granted AcrPull role on the ACR.
-//
 // === OUTPUTS ===
 
 @description('The login server of the Azure Container Registry.')
 output acrLoginServer string = acr.outputs.loginServer
 
 @description('The name of the Azure Container Registry resource.')
-output acrName string = 'cryptolinkBRCh169606169600' // we need something really random, temp solution is here
+// ZMIANA: Pobieramy nazwę dynamicznie z modułu (clean code)
+output acrName string = acr.outputs.name
 
 @description('The name of the AKS cluster.')
 output aksClusterName string = aks.outputs.clusterName
