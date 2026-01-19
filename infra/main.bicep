@@ -17,7 +17,7 @@ param postgresAdminPassword string
 
 @description('A globally unique name for the Azure Container Registry.')
 // WAŻNE: Nazwa jest przekazywana z GitHub Actions, ale musi pasować do istniejącego zasobu
-param acrName string = 'cryptolinkBRCh169606169600'
+param acrName string = 'cryptolinkBRChProj169606169600'
 
 @description('The name of the AKS cluster provided by CI/CD pipeline.')
 param aksClusterName string = 'aks-cryptolink'
