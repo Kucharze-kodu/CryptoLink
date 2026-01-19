@@ -42,8 +42,6 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
-// Apply database migrations
-app.ApplyMigration();
 
 
 // Configure the HTTP request pipeline.
@@ -70,6 +68,11 @@ app.UseAuthorization();
 app.AddAuthenticationEndpoints();
 // END ENDPOINTS
 
+
+
+// Apply database migrations
+app.ApplyMigration();
+app.ApplySeeder();
 
 // Mapowanie komponentów Blazor
 app.MapRazorComponents<App>()
