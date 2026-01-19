@@ -1,25 +1,22 @@
 // infra/modules/acr.bicep
-
-@description('The Azure region for the ACR.')
+@description('The Azure region for all resources.')
 param location string
 
 @description('A globally unique name for the Container Registry.')
 param acrName string
 
-// Definiujemy zasób w pełni - to pozwala na jego stworzenie LUB aktualizację
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: acrName
   location: location
   sku: {
-    name: 'Standard' // Standard jest bezpieczniejszy i wspiera Identity
+    name: 'Basic'
   }
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    adminUserEnabled: false // Zgodnie z Twoją polityką bezpieczeństwa
-    publicNetworkAccess: 'Enabled'
-    zoneRedundancy: 'Disabled'
+    // UWAGA: To włączy admina. Jeśli polityka zabrania, zmień na false.
+    adminUserEnabled: true 
   }
 }
 

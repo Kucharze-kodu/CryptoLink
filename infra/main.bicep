@@ -1,7 +1,7 @@
 // infra/main.bicep
 
 // === PARAMETERS ===
-@description('The Azure region for resource group based resources.')
+@description('The Azure region for all resources.')
 param location string = resourceGroup().location
 
 @description('The admin username for the jumphost VM and the database.')
@@ -16,7 +16,7 @@ param sshPublicKey string
 param postgresAdminPassword string
 
 @description('A globally unique name for the Azure Container Registry.')
-// WAŻNE: Nazwa musi być stała, bo posiadasz ją globalnie
+// WAŻNE: Nazwa jest przekazywana z GitHub Actions, ale musi pasować do istniejącego zasobu
 param acrName string = 'cryptolinkBRCh169606169600'
 
 @description('The name of the AKS cluster provided by CI/CD pipeline.')
@@ -31,17 +31,18 @@ module networking './modules/networking.bicep' = {
   }
 }
 
-// === ACR MODULE ===
+// === TU JEST POPRAWKA ===
 module acr './modules/acr.bicep' = {
-  // Nowa nazwa deploymentu, żeby odciąć się od błędów w historii
-  name: 'acr-deployment-production' 
+  // Zmieniamy nazwę deploymentu, żeby uniknąć historii błędów
+  name: 'acr-deployment-fix-region' 
   params: {
-    // CRITICAL FIX: Wymuszamy region ACR niezależnie od regionu Grupy Zasobów.
-    // Dzięki temu unikamy błędu "AlreadyInUse" przy cross-region deployment.
+    // 🛑 NIE UŻYWAJ TU ZMIENNEJ 'location'!
+    // ✅ MUSI BYĆ 'northeurope', bo tam fizycznie stworzyłeś ten ACR.
     location: 'northeurope' 
     acrName: acrName
   }
 }
+// =========================
 
 module database './modules/database.bicep' = {
   params: {
