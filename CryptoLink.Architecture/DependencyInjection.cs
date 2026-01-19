@@ -73,7 +73,9 @@ namespace CryptoLink.Architecture
             services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBearerOptionsSetup>();
 
+
             services.AddAuthorization();
+
             services.AddHttpContextAccessor();
 
             // Data Protection configuration
