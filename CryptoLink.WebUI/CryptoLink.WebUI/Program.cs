@@ -33,7 +33,7 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
-// Swagger (opcjonalnie, przydatne do testów)
+// Swagger (opcjonalnie, przydatne do testï¿½w)
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
@@ -45,12 +45,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
-
-
-
-
-// Apply database migrations
-app.ApplyMigration();
 
 
 // Configure the HTTP request pipeline.
@@ -72,7 +66,7 @@ app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapowanie Endpointów
+// Mapowanie Endpointï¿½w
 // ENDPOINTS
 app.AddLinkExtendedModule();
 app.AddLinkWordModule();
@@ -81,7 +75,12 @@ app.AddAuthStateProvider();
 // END ENDPOINTS
 
 
-// Mapowanie komponentów Blazor
+
+// Apply database migrations
+app.ApplyMigration();
+app.ApplySeeder();
+
+// Mapowanie komponentï¿½w Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);
