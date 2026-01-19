@@ -1,0 +1,12 @@
+# kubernetes/01-postgres-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: cryptolink-app
+spec:
+  accessModes:
+    - ReadWriteOnce # Dysk może być podłączony do jednego węzła na raz
+  resources:
+    requests:
+      storage: 8Gi # Prosimy o 8 GB dysku

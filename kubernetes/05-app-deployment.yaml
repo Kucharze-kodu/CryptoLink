@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cryptolink-app-deployment
+  namespace: cryptolink-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cryptolink-app
+  template:
+    metadata:
+      labels:
+        app: cryptolink-app
+    spec:
+      containers:
+      - name: cryptolink-webui
+        image: ${IMAGE_NAME}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:8080"
+
+        # JWT secret (wstrzykiwany z K8s secret) - ORAZ
+        - name: JwtOptions__SecretKey
+          valueFrom:
+            secretKeyRef:
+              name: cryptolink-auth-secrets
+              key: JwtOptions__SecretKey
+
+        - name: Jwt__SecretKey
+          valueFrom:
+            secretKeyRef:
+              name: cryptolink-auth-secrets
+              key: Jwt__SecretKey
+
+        # DB credentials z istniejącego secreta
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: ConnectionStrings__Default
+          valueFrom:
+            secretKeyRef:
+              name: cryptolink-app-secrets
+              key: ConnectionStrings__Default

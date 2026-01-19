@@ -1,0 +1,20 @@
+# kubernetes/07-ingress.yaml
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: cryptolink-ingress
+#  namespace: cryptolink-app
+#  annotations:
+#    # Używamy kontrolera ingress NGINX
+#    kubernetes.io/ingress.class: "nginx"
+#spec:
+#  rules:
+# - http:
+#      paths:
+#      - path: /
+#        pathType: Prefix
+#        backend:
+#          service:
+#            name: cryptolink-app-service
+#            port:
+#              number: 80

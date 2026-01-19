@@ -1,0 +1,86 @@
+// infra/main.bicep
+
+// === PARAMETERS ===
+@description('The Azure region for all resources.')
+param location string = resourceGroup().location
+
+@description('The admin username for the jumphost VM and the database.')
+param adminUsername string = 'azureuser'
+
+@description('The SSH public key for the jumphost VM.')
+@secure()
+param sshPublicKey string
+
+@description('The password for the PostgreSQL admin user.')
+@secure()
+param postgresAdminPassword string
+
+@description('A globally unique name for the Azure Container Registry.')
+param acrName string = 'acr${uniqueString(resourceGroup().id)}'
+
+@description('The name of the AKS cluster provided by CI/CD pipeline.')
+param aksClusterName string = 'aks-cryptolink'
+
+// === MODULES ===
+
+module networking './modules/networking.bicep' = {
+  params: {
+    location: location
+    baseName: 'cryptolink'
+  }
+}
+
+module acr './modules/acr.bicep' = {
+  params: {
+    location: location
+    acrName: acrName
+  }
+}
+
+module database './modules/database.bicep' = {
+  params: {
+    location: location
+    subnetId: networking.outputs.databaseSubnetId
+    postgresAdminUser: adminUsername
+    postgresAdminPassword: postgresAdminPassword
+  }
+}
+
+module aks './modules/aks.bicep' = {
+  params: {
+    location: location
+    aksSubnetId: networking.outputs.aksSubnetId
+    dnsPrefix: 'cryptolink-aks'
+    aksClusterName: aksClusterName
+  }
+}
+
+module management './modules/management.bicep' = {
+  params: {
+    location: location
+    managementSubnetId: networking.outputs.managementSubnetId
+    bastionSubnetId: networking.outputs.bastionSubnetId
+    adminUsername: adminUsername
+    sshPublicKey: sshPublicKey
+  }
+}
+
+// === ROLE ASSIGNMENTS ===
+
+// Note: ACR pull role assignment should be deployed using the AKS module
+// or a separate module at the appropriate scope to avoid deployment scope issues.
+// The AKS cluster's managed identity should be granted AcrPull role on the ACR.
+//
+// === OUTPUTS ===
+
+@description('The login server of the Azure Container Registry.')
+output acrLoginServer string = acr.outputs.loginServer
+
+@description('The name of the Azure Container Registry resource.')
+output acrName string = 'cryptolinkBRCh169606169600' // we need something really random, temp solution is here
+
+@description('The name of the AKS cluster.')
+output aksClusterName string = aks.outputs.clusterName
+
+@description('The FQDN of the PostgreSQL server.')
+output databaseServerFqdn string = database.outputs.serverFqdn
