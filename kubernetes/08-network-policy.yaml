@@ -5,12 +5,11 @@ metadata:
   name: cryptolink-default-deny
   namespace: cryptolink-app
 spec:
-  # Stosuj tę politykę do wszystkich podów w namespace
+  # Default deny all ingress and egress traffic
   podSelector: {}
   policyTypes:
   - Ingress
   - Egress
-  # Pusta definicja ingress/egress = blokuj wszystko
   ingress: []
   egress: []
 
@@ -21,7 +20,6 @@ metadata:
   name: allow-app-access
   namespace: cryptolink-app
 spec:
-  # Stosuj tę politykę do podów aplikacji
   podSelector:
     matchLabels:
       app: cryptolink-app
@@ -29,11 +27,9 @@ spec:
   - Ingress
   - Egress
   ingress:
-    # Zezwalaj na ruch przychodzący od Ingress Controller
     - from:
-      - namespaceSelector: {} # Uproszczenie dla celów projektu
+      - namespaceSelector: {}
   egress:
-    # Zezwalaj na ruch wychodzący do bazy danych
     - to:
       - podSelector:
           matchLabels:
@@ -41,7 +37,6 @@ spec:
       ports:
       - protocol: TCP
         port: 5432
-    # Zezwalaj na ruch wychodzący do DNS
     - ports:
       - protocol: UDP
         port: 53
@@ -53,14 +48,12 @@ metadata:
   name: allow-db-access
   namespace: cryptolink-app
 spec:
-  # Stosuj tę politykę do podów bazy danych
   podSelector:
     matchLabels:
       app: postgres-db
   policyTypes:
   - Ingress
   ingress:
-    # Zezwalaj na ruch przychodzący tylko od podów aplikacji
     - from:
       - podSelector:
           matchLabels:

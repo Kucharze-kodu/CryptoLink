@@ -23,21 +23,16 @@ spec:
           value: "Production"
         - name: ASPNETCORE_URLS
           value: "http://+:8080"
-
-        # JWT secret (wstrzykiwany z K8s secret) - ORAZ
         - name: JwtOptions__SecretKey
           valueFrom:
             secretKeyRef:
               name: cryptolink-auth-secrets
               key: JwtOptions__SecretKey
-
         - name: Jwt__SecretKey
           valueFrom:
             secretKeyRef:
               name: cryptolink-auth-secrets
               key: Jwt__SecretKey
-
-        # DB credentials z istniejącego secreta
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:

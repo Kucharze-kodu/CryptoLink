@@ -6,7 +6,7 @@ metadata:
   namespace: cryptolink-app
 spec:
   accessModes:
-    - ReadWriteOnce # Dysk może być podłączony do jednego węzła na raz
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 8Gi # Prosimy o 8 GB dysku
+      storage: 8Gi

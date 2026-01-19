@@ -5,7 +5,6 @@
 #  name: cryptolink-ingress
 #  namespace: cryptolink-app
 #  annotations:
-#    # Używamy kontrolera ingress NGINX
 #    kubernetes.io/ingress.class: "nginx"
 #spec:
 #  rules:
