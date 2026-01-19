@@ -14,36 +14,35 @@
             <AuthorizeView>
                 <NotAuthorized>
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="login">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="Login">
                             <span class="oi oi-list-rich" aria-hidden="true"></span> Login
                         </NavLink>
                     </div>
                     <div class="nav-item px-3">
-                        <button class="dropdown-item nav-link" @onclick="Register" style="cursor: pointer;">
-                            <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Register
-                        </button>
-                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="register">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="Register">
                             <span class="oi oi-list-rich" aria-hidden="true"></span> Register
                         </NavLink>
                     </div>
                 </NotAuthorized>
 
                 <Authorized>
-                    <div style="display: flex; justify-content: flex-start; margin-right: 2cm;">
+
+                    <li>
+                        <button class="dropdown-item nav-link" @onclick="Logout" style="cursor: pointer;">
+                            <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Wyloguj się
+                        </button>
+                    </li>
+@*                     <div style="display: flex; justify-content: flex-start; margin-right: 2cm;">
                         <div class="dropdown" style="margin-left: 20px;">
+
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 Konto
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
 
-                                <li>
-                                    <button class="dropdown-item nav-link" @onclick="Logout" style="cursor: pointer;">
-                                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Wyloguj się
-                                    </button>
-                                </li>
                             </ul>
                         </div>
-                    </div>
+                    </div> *@
                 </Authorized>
             </AuthorizeView>
         </div>
@@ -64,13 +63,8 @@
 
 
 @code {
-    private void Register()
-    {
-        navigationManager.NavigateTo("/register");
-    }
-
     private void Logout()
     {
-        navigationManager.NavigateTo("/logout", forceLoad: true);
+        navigationManager.NavigateTo("/Logout", forceLoad: true);
     }
 }

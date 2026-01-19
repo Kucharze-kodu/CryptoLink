@@ -1,0 +1,19 @@
+﻿@page "/ListLink"
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<h3>Lista linków</h3>
+
+
+<AuthorizeView>
+    <Authorized>
+
+
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+}

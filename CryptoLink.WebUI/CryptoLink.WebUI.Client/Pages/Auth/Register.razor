@@ -1,4 +1,4 @@
-﻿@page "/register"
+﻿@page "/Register"
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject AuthService AuthService
 @inject NavigationManager Navigation
@@ -7,6 +7,7 @@
 
 <h3>Rejestracja PGP</h3>
 
+<div class="card p-3">
 @if (step == 1)
 {
     <div class="form-group">
@@ -38,3 +39,4 @@ else if (step == 2)
     <button class="btn btn-success" @onclick="HandleComplete">Zarejestruj się</button>
 }
 
+</div>

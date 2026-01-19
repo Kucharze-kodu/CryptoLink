@@ -20,6 +20,14 @@ builder.Services.AddHttpClient<AuthService>(client =>
      client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
      .AddHttpMessageHandler<CookieHandler>();
 
+builder.Services.AddHttpClient<BookWordService>(client =>
+     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+     .AddHttpMessageHandler<CookieHandler>();
+
+builder.Services.AddHttpClient<LinksService>(client =>
+     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+     .AddHttpMessageHandler<CookieHandler>();
+
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();

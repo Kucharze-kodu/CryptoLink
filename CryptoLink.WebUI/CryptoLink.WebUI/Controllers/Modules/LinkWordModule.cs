@@ -1,5 +1,6 @@
 ﻿using CryptoLink.Application.Features.BookWords.Commands.CreateBookWords;
 using CryptoLink.Application.Features.BookWords.Commands.DeleteBookWords;
+using CryptoLink.Application.Features.BookWords.Commands.RandomLinks;
 using CryptoLink.Application.Features.BookWords.Queries.GetAllBookWordCategory;
 using CryptoLink.Application.Features.BookWords.Queries.GetAllCategory;
 using CryptoLink.Application.Features.LinkExtendeds.Queries.GetAllLinkExtended;
@@ -36,6 +37,17 @@ namespace CryptoLink.WebUI.Controllers.Modules
                     errors => Problem(errors));
             }).RequireAuthorization();
 
+
+            app.MapPost("/api/generateLink", async (
+             [FromBody] CreateRandomLinkCommand command,
+             [FromServices] ISender sender) =>
+            {
+                var response = await sender.Send(command);
+
+                return response.Match(
+                    result => Ok(result),
+                    errors => Problem(errors));
+            }).RequireAuthorization();
 
             app.MapGet("/api/Categorybookword", async (
             [FromServices] ISender sender) =>
