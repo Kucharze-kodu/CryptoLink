@@ -139,13 +139,22 @@ jobs:
         method: kubeconfig
         kubeconfig: ${{ secrets.KUBE_CONFIG }}
       
+    - name: Set AKS Context
+      uses: azure/aks-set-context@v3
+      with:
+        # Tu wpisz nazwę swojej grupy zasobów (zwróć uwagę na wielkość liter!)
+        resource-group: projekt-BRCh-v2
+        # Tu wpisz nazwę klastra
+        cluster-name: aks-cryptolink
+
+    # 2. Teraz, gdy jesteśmy połączeni, tworzymy brakujące sekrety
     - name: Generate Missing Secrets
       run: |
         # Tworzymy namespace (jeśli nie istnieje)
         kubectl create namespace cryptolink-app --dry-run=client -o yaml | kubectl apply -f -
 
-        # Tworzymy ConnectionString z Twojego hasła w GitHub Secrets
-        # UWAGA: Upewnij się, że Username=azureuser jest zgodny z tym, co ustawiłeś w Bicep dla bazy!
+        # Tworzymy ConnectionString (używając hasła ze zmiennych GitHub)
+        # Upewnij się, że Username=azureuser jest zgodny z tym co w bazie!
         kubectl create secret generic cryptolink-app-secrets \
           --namespace cryptolink-app \
           --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
