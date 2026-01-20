@@ -81,7 +81,7 @@ jobs:
 
         echo "IMAGE_NAME=$FULL_IMAGE_NAME" >> $GITHUB_OUTPUT
 
-  # === JOB 3: WDRÓŻ NA AKS ===
+# === JOB 3: WDRÓŻ NA AKS ===
   deploy-to-aks:
     name: 'Deploy Application to AKS'
     runs-on: ubuntu-latest
@@ -91,39 +91,20 @@ jobs:
     - name: 'Checkout Repository'
       uses: actions/checkout@v3
 
+    # 1. Logowanie do Azure (Konieczne do pobrania credsów do AKS)
     - name: 'Login to Azure'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Install kubelogin'
-      uses: azure/use-kubelogin@v1
-      with:
-        kubelogin-version: 'latest'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    # 2. Ustawienie kontekstu AKS (To jest jedyna potrzebna akcja do połączenia)
     - name: 'Set AKS context'
       uses: azure/aks-set-context@v3
       with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }} # lub wpisz 'projekt-BRCh-v2' jeśli sekret nie działa
         cluster-name: ${{ env.AKS_CLUSTER_NAME }}
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
-        admin: 'true'
-        use-kubelogin: 'true'
-
-    - name: 'Ensure namespace exists'
-      run: kubectl apply -f kubernetes/00-namespace.yaml
-
-    - name: 'Create/Update JWT secret in AKS'
-      run: |
-        kubectl create secret generic cryptolink-auth-secrets \
-          -n cryptolink-app \
-          --from-literal=JwtOptions__SecretKey='${{ secrets.JWT_SECRET_KEY }}' \
-          --from-literal=Jwt__SecretKey='${{ secrets.JWT_SECRET_KEY }}' \
-          --dry-run=client -o yaml | kubectl apply -f -
-
-    # KROK 1: Podmień zmienne w plikach YAML (np. nazwę obrazu)
-    # To jest kluczowe, żeby Kubernetes wiedział, jaki konkretnie obraz (SHA) pobrać
+    
+    # 3. Podmiana nazwy obrazu w plikach YAML (np. SHA commita)
     - name: 'Substitute Image Name in Manifests'
       uses: cschleiden/replace-tokens@v1
       with:
@@ -133,28 +114,15 @@ jobs:
       env:
         IMAGE_NAME: ${{ needs.build-and-push-docker.outputs.IMAGE_NAME }}
 
-    - name: Create App Connection Secret
-      uses: azure/k8s-set-context@v3
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
-      
-    - name: Set AKS Context
-      uses: azure/aks-set-context@v3
-      with:
-        # Tu wpisz nazwę swojej grupy zasobów (zwróć uwagę na wielkość liter!)
-        resource-group: projekt-BRCh-v2
-        # Tu wpisz nazwę klastra
-        cluster-name: aks-cryptolink
-
-    # 2. Teraz, gdy jesteśmy połączeni, tworzymy brakujące sekrety
+    # 4. Generowanie sekretów (To naprawia błąd "CreateContainerConfigError")
     - name: Generate Missing Secrets
       run: |
         # Tworzymy namespace (jeśli nie istnieje)
         kubectl create namespace cryptolink-app --dry-run=client -o yaml | kubectl apply -f -
 
-        # Tworzymy ConnectionString (używając hasła ze zmiennych GitHub)
-        # Upewnij się, że Username=azureuser jest zgodny z tym co w bazie!
+        # Tworzymy ConnectionString (używając hasła z GitHub Secrets)
+        # UWAGA: Username 'azureuser' to domyślna wartość z Twojego Bicepa. 
+        # Jeśli zmieniłeś usera w bazie na 'postgres', zmień to też tutaj!
         kubectl create secret generic cryptolink-app-secrets \
           --namespace cryptolink-app \
           --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
@@ -167,12 +135,12 @@ jobs:
           --from-literal=Jwt__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    # KROK 2: Wdróż manifesty w odpowiedniej kolejności
+    # 5. Wdrożenie manifestów
     - name: 'Deploy to AKS'
       uses: Azure/k8s-deploy@v4
       with:
         action: 'deploy'
-        namespace: 'cryptolink-app' # Matches the namespace defined in 00-namespace.yaml
+        namespace: 'cryptolink-app'
         manifests: |
           kubernetes/00-namespace.yaml
           kubernetes/01-postgres-pvc.yaml
@@ -182,13 +150,3 @@ jobs:
           kubernetes/05-app-deployment.yaml
           kubernetes/06-app-service.yaml
           kubernetes/08-network-policy.yaml
-
-    - name: Create/Update app connection string secret (from postgres-secret)
-      run: |
-        DB_USER=$(kubectl get secret -n cryptolink-app postgres-secret -o jsonpath='{.data.POSTGRES_USER}' | base64 -d)
-        DB_PASS=$(kubectl get secret -n cryptolink-app postgres-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)
-
-        kubectl create secret generic cryptolink-app-secrets \
-          -n cryptolink-app \
-          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=${DB_USER};Password=${DB_PASS}" \
-          --dry-run=client -o yaml | kubectl apply -f -
