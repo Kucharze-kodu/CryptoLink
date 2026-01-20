@@ -80,9 +80,6 @@ resource jumphostVm 'Microsoft.Compute/virtualMachines@2023-07-01' = {
         createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
-          securityProfile: {
-            securityEncryptionType: 'VMGuestStateOnly'
-          }
         }
       }
     }

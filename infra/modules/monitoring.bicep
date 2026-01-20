@@ -5,9 +5,6 @@
 @description('The Azure region for all resources.')
 param location string
 
-@description('The name of the AKS cluster.')
-param aksClusterName string
-
 @description('The name of the Log Analytics workspace.')
 param logAnalyticsWorkspaceName string = 'cryptolink-law-${uniqueString(resourceGroup().id)}'
 
