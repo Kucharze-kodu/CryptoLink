@@ -40,53 +40,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-09-01' = {
   }
 }
 
-@description('Log Analytics Workspace ID for diagnostics.')
-param logAnalyticsWorkspaceId string = ''
-
-// === DIAGNOSTIC SETTINGS (if Log Analytics provided) ===
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (!empty(logAnalyticsWorkspaceId)) {
-  name: '${aksClusterName}-diagnostics'
-  scope: aksCluster
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'cluster-autoscaling'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-      {
-        category: 'guard'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-      {
-        category: 'kube-apiserver'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-    ]
-  }
-}
+// NOTE: Monitoring via Log Analytics is configured in monitoring.bicep
+// Container Insights will automatically collect metrics when Log Analytics workspace is linked
 
 // === OUTPUTS ===
 @description('The name of the AKS cluster.')

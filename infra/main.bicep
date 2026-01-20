@@ -56,7 +56,6 @@ module database './modules/database.bicep' = {
 module monitoring './modules/monitoring.bicep' = {
   params: {
     location: location
-    aksClusterName: aksClusterName
   }
 }
 
@@ -66,7 +65,6 @@ module aks './modules/aks.bicep' = {
     aksSubnetId: networking.outputs.aksSubnetId
     dnsPrefix: 'cryptolink-aks'
     aksClusterName: aksClusterName
-    logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
   }
 }
 
