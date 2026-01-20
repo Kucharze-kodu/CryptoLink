@@ -48,7 +48,7 @@ namespace CryptoLink.WebUI.Client.Pages.Links
         {
             message = "";
             isError = false;
-            generatedLink = Navigation.BaseUri;
+            generatedLink = Navigation.BaseUri+"Link/";
 
 
             if (!selectedCategories.Any())
@@ -70,7 +70,7 @@ namespace CryptoLink.WebUI.Client.Pages.Links
             }
             catch (Exception ex)
             {
-                ShowMessage($"Błąd generowania linku: {ex.Message}", true);
+                ShowMessage($"Błąd generowania linku", true);
             }
             finally
             {
@@ -91,7 +91,6 @@ namespace CryptoLink.WebUI.Client.Pages.Links
                 userProvidedUrl = "https://" + userProvidedUrl;
             }
 
-            // 2. Teraz sprawdź poprawność pełnego adresu
             bool isValidUrl = Uri.TryCreate(userProvidedUrl, UriKind.Absolute, out Uri? uriResult)
                               && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                               && uriResult.Host.Contains(".");
@@ -101,7 +100,7 @@ namespace CryptoLink.WebUI.Client.Pages.Links
                 return;
             }
 
-            if (string.IsNullOrEmpty(generatedLink) && generatedLink != Navigation.BaseUri)
+            if (string.IsNullOrEmpty(generatedLink) && generatedLink != (Navigation.BaseUri+"Link/"))
             {
                 ShowMessage("Najpierw wygeneruj link.", true);
                 return;

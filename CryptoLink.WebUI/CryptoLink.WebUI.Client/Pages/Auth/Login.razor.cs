@@ -7,7 +7,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string username;
         private string encryptedMessage;
         private string decryptedToken;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
+        private string errorMessage = string.Empty;
 
 
 
@@ -15,13 +15,12 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         {
             try
             {
-                // KROK 1: Pobierz zagadkę
+
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
                 step = 2;
             }
             catch (Exception ex)
             {
-                // Np. brak użytkownika w bazie
                 Console.WriteLine(ex.Message);
             }
         }
@@ -45,7 +44,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             }
             catch (Exception)
             {
-                Console.WriteLine("Error veryfy");
+                Console.WriteLine("Error verify");
             }
         }
     }

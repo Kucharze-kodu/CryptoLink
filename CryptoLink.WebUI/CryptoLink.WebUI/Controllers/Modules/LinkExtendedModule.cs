@@ -76,16 +76,16 @@ namespace CryptoLink.WebUI.Controllers.Modules
 
 
             app.MapGet("/api/LoadlinkExtended", async (
-            [FromBody] LoadLinkExtendedQuery querry,
+            [AsParameters] LoadLinkExtendedQuery querry,
             [FromServices] ISender sender) =>
-                    {
-                        var response = await sender.Send(querry);
+            {
+                var response = await sender.Send(querry);
 
-                        return response.Match(
-                            result => Ok(result),
-                            errors => Problem(errors));
-                    }
-            );
+                return response.Match(
+                    result => Ok(result),
+                    errors => Problem(errors));
+            }
+            ).AllowAnonymous();
         }
     }
 }

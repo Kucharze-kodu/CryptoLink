@@ -75,24 +75,21 @@ namespace CryptoLink.WebUI.Client.Services
             }
         }
 
-        public async Task<string?> LoadLinkAsync(string queryLink)
+        public async Task<LoadLinkDto?> LoadLinkAsync(string queryLink)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/LoadlinkExtended")
-            {
-                Content = JsonContent.Create(queryLink)
-            };
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.GetAsync($"api/LoadlinkExtended?link={queryLink}");
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<string>();
+                return await response.Content.ReadFromJsonAsync<LoadLinkDto>();
             }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Błąd ładowania linku: {error}");
             }
+
         }
 
         private async Task HandleResponse(HttpResponseMessage response)
