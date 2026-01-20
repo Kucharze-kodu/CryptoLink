@@ -44,7 +44,7 @@ jobs:
           acrName="${{ env.ACR_NAME }}"
         failOnStdErr: false
 
-  # === JOB 2: ZBUDUJ I OPUBLIKUJ DOCKER ===
+  # ==== JOB 2: ZBUDUJ I OPUBLIKUJ DOCKER ====
   build-and-push-docker:
     name: 'Build and Push Docker Image'
     runs-on: ubuntu-latest
