@@ -148,7 +148,6 @@ jobs:
         namespace: 'cryptolink-app'
         manifests: |
           kubernetes/00-namespace.yaml
-          kubernetes/01-postgres-pvc.yaml
           kubernetes/03-postgres-statefulset.yaml
           kubernetes/04-postgres-service.yaml
           kubernetes/05-app-deployment.yaml
