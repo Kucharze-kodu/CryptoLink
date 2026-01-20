@@ -62,7 +62,8 @@ public static class AuthenticationModule
                         HttpOnly = true,    
                         Secure = true,      
                         SameSite = SameSiteMode.Strict, 
-                        Expires = result.TokenExpiresOnUtc
+                        Expires = result.TokenExpiresOnUtc,
+                        Path = "/"
                     };
 
                     httpContext.Response.Cookies.Append("CookiesAuth", result.Token, cookieOptions);

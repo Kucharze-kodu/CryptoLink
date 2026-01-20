@@ -1,6 +1,14 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using CryptoLink.WebUI.Controllers.Modules
+@using Microsoft.AspNetCore.Components.Authorization
+@using static System.Net.WebRequestMethods
+@using CryptoLink.WebUI.Client.Components
+
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+
 
 <div class="page">
 
@@ -26,34 +34,18 @@
                 </NotAuthorized>
 
                 <Authorized>
-
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="Logout">
-                            <span class="oi oi-list-rich" aria-hidden="true"></span> Wyloguj się
-                        </NavLink>
+                        Witaj, @context.User.Identity?.Name!
                     </div>
-                    <li>
-                        <button class="dropdown-item nav-link" @onclick="Logout" style="cursor: pointer;">
-                            <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Wyloguj się
-                        </button>
-                    </li>
-@*                     <div style="display: flex; justify-content: flex-start; margin-right: 2cm;">
-                        <div class="dropdown" style="margin-left: 20px;">
-
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Konto
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-
-                            </ul>
-                        </div>
-                    </div> *@
+                    <LogoutButton />
                 </Authorized>
             </AuthorizeView>
         </div>
 
         <article class="content px-4">
             @Body
+
+            @a
         </article>
     </main>
 
@@ -68,8 +60,30 @@
 
 
 @code {
-    private void Logout()
+    private int a = 0;
+
+    private async Task Logout()
     {
-        navigationManager.NavigateTo("/Logout", forceLoad: true);
+        a=100;
+
+        try
+        {
+            await Http.PostAsync("/api/authC/logout", null);
+
+
+            if (AuthStateProvider is CustomAuthStateProvider customProvider)
+            {
+                customProvider.NotifyUserLogout();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd API: {ex.Message}");
+        }
+        finally
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+ 
     }
 }

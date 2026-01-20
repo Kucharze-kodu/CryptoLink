@@ -1,21 +1,27 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using static CryptoLink.WebUI.Controllers.Common.HttpResultsExtensions;
-
+﻿
 namespace CryptoLink.WebUI.Controllers.Modules;
 
 public static class AuthStateProvider
 {
     public static void AddAuthStateProvider(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/authC/logout", async (HttpContext httpContext) =>
+        app.MapPost("/api/authC/logout", (HttpContext httpContext) =>
         {
-            //await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //httpContext.Response.Headers.Append("Clear-Site-Data", "\"Cookies\"");
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/",
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+
+            httpContext.Response.Cookies.Append("CookiesAuth", "", cookieOptions);
+            httpContext.Response.Headers.Append("Clear-Site-Data", "\"cookies\"");
+
             return Results.Ok();
-        });
+        })
+            .AllowAnonymous();
 
 
         app.MapGet("/api/authC/user-info", (HttpContext httpContext) =>
