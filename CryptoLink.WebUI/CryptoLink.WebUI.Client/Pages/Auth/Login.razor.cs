@@ -1,27 +1,35 @@
-﻿
+﻿using Microsoft.AspNetCore.Components;
+using CryptoLink.WebUI.Client.Services;
+
 namespace CryptoLink.WebUI.Client.Pages.Auth
 {
     public partial class Login
     {
+        [Inject]
+        private AuthService AuthService { get; set; }
+
+        [Inject]
+        private NavigationManager Navigation { get; set; }
+
+        [Inject]
+        private CookieAuthenticationStateProvider AuthProvider { get; set; }
+
         private int step = 1;
         private string username;
         private string encryptedMessage;
         private string decryptedToken;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
-
-
+        private string errorMessage = string.Empty;
 
         private async Task HandleInit()
         {
             try
             {
-                // KROK 1: Pobierz zagadkę
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
                 step = 2;
             }
             catch (Exception ex)
             {
-                // Np. brak użytkownika w bazie
+                errorMessage = "Błąd: " + ex.Message;
                 Console.WriteLine(ex.Message);
             }
         }
@@ -36,16 +44,19 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
                 return;
             }
 
-
             try
             {
                 await AuthService.CompleteLoginAsync(username, decryptedToken);
 
+                // Powiadom AuthenticationStateProvider
+                AuthProvider.NotifyUserAuthentication(username, username);
+
                 Navigation.NavigateTo("/", forceLoad: true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error veryfy");
+                errorMessage = "Błąd logowania: " + ex.Message;
+                Console.WriteLine("Error verify: " + ex.Message);
             }
         }
     }

@@ -77,5 +77,18 @@ public static class AuthenticationModule
             httpContext.Response.Cookies.Delete("CookiesAuth");
             return Results.Ok();
         });
+
+        app.MapGet("/api/auth/me", (HttpContext httpContext) =>
+        {
+            // Sprawdzamy czy ciasteczko CookiesAuth istnieje
+            if (httpContext.Request.Cookies.TryGetValue("CookiesAuth", out var token))
+            {
+                // TODO: Zdekoduj JWT i pobierz info użytkownika
+                // Na razie zwracamy podstawowe dane - klient pobierze użytkownika z tokenu
+                return Results.Ok(new { UserId = "current-user", Username = "current-user" });
+            }
+
+            return Results.Unauthorized();
+        });
     }
 }
