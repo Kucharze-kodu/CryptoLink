@@ -133,6 +133,31 @@ jobs:
       env:
         IMAGE_NAME: ${{ needs.build-and-push-docker.outputs.IMAGE_NAME }}
 
+    - name: Create App Connection Secret
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      
+    - name: Generate Missing Secrets
+      run: |
+        # Tworzymy namespace jeśli nie istnieje (dla pewności)
+        kubectl create namespace cryptolink-app --dry-run=client -o yaml | kubectl apply -f -
+
+        # 1. Tworzymy brakujący sekret do bazy danych (ConnectionString)
+        # Używamy dry-run i apply, żeby działało idempotentnie (zawsze)
+        kubectl create secret generic cryptolink-app-secrets \
+          --namespace cryptolink-app \
+          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+        # 2. Tworzymy sekrety do JWT (jeśli ich też brakuje w repo)
+        kubectl create secret generic cryptolink-auth-secrets \
+          --namespace cryptolink-app \
+          --from-literal=JwtOptions__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
+          --from-literal=Jwt__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
     # KROK 2: Wdróż manifesty w odpowiedniej kolejności
     - name: 'Deploy to AKS'
       uses: Azure/k8s-deploy@v4
