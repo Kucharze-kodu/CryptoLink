@@ -7,11 +7,11 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: cryptolink-webui
+      app: cryptolink-app
   template:
     metadata:
       labels:
-        app: cryptolink-webui
+        app: cryptolink-app
     spec:
       # Używamy dedykowanego ServiceAccount z ograniczonymi uprawnieniami (RBAC)
       serviceAccountName: cryptolink-app

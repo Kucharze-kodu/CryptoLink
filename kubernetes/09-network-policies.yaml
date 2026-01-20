@@ -20,7 +20,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: cryptolink-webui
+              app: cryptolink-app
       ports:
         - protocol: TCP
           port: 5432
@@ -35,7 +35,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: cryptolink-webui
+      app: cryptolink-app
   policyTypes:
     - Ingress
     - Egress
