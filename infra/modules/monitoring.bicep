@@ -8,9 +8,6 @@ param location string
 @description('The name of the AKS cluster.')
 param aksClusterName string
 
-@description('The resource ID of the AKS cluster.')
-param aksClusterResourceId string
-
 @description('The name of the Log Analytics workspace.')
 param logAnalyticsWorkspaceName string = 'cryptolink-law-${uniqueString(resourceGroup().id)}'
 
@@ -26,50 +23,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12
   }
 }
 
-// === CONTAINER INSIGHTS (DIAGNOSTICS) ===
-resource containerInsightsDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01' = {
-  name: '${aksClusterName}-diagnostics'
-  scope: resourceId('Microsoft.ContainerService/managedClusters', aksClusterName)
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logs: [
-      {
-        category: 'cluster-autoscaling'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-      {
-        category: 'guard'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-      {
-        category: 'kube-apiserver'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 30
-        }
-      }
-    ]
-  }
-}
+// NOTE: Diagnostic settings configured in aks.bicep where we have resource reference
 
 // === METRICS ALERTS ===
 

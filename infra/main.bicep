@@ -53,12 +53,20 @@ module database './modules/database.bicep' = {
   }
 }
 
+module monitoring './modules/monitoring.bicep' = {
+  params: {
+    location: location
+    aksClusterName: aksClusterName
+  }
+}
+
 module aks './modules/aks.bicep' = {
   params: {
     location: location
     aksSubnetId: networking.outputs.aksSubnetId
     dnsPrefix: 'cryptolink-aks'
     aksClusterName: aksClusterName
+    logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
   }
 }
 
@@ -69,14 +77,6 @@ module management './modules/management.bicep' = {
     bastionSubnetId: networking.outputs.bastionSubnetId
     adminUsername: adminUsername
     sshPublicKey: sshPublicKey
-  }
-}
-
-module monitoring './modules/monitoring.bicep' = {
-  params: {
-    location: location
-    aksClusterName: aksClusterName
-    aksClusterResourceId: aks.outputs.clusterResourceId
   }
 }
 
