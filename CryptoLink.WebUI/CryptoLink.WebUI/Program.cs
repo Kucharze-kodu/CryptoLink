@@ -58,7 +58,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // WYŁĄCZAMY NA CZAS TESTÓW HTTP
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseCors("AllowAllOrigins");

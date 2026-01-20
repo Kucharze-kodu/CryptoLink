@@ -16,7 +16,6 @@ param sshPublicKey string
 param postgresAdminPassword string
 
 @description('A globally unique name for the Azure Container Registry.')
-// WAŻNE: Nazwa jest przekazywana z GitHub Actions, ale musi pasować do istniejącego zasobu
 param acrName string = 'cryptolinkBRChProj169606169600'
 
 @description('The name of the AKS cluster provided by CI/CD pipeline.')
@@ -31,13 +30,9 @@ module networking './modules/networking.bicep' = {
   }
 }
 
-// === TU JEST POPRAWKA ===
 module acr './modules/acr.bicep' = {
-  // Zmieniamy nazwę deploymentu, żeby uniknąć historii błędów
   name: 'acr-deployment-fix-region' 
   params: {
-    // 🛑 NIE UŻYWAJ TU ZMIENNEJ 'location'!
-    // ✅ MUSI BYĆ 'northeurope', bo tam fizycznie stworzyłeś ten ACR.
     location: 'northeurope' 
     acrName: acrName
   }
