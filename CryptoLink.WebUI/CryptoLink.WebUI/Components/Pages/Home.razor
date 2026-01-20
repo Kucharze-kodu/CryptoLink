@@ -4,7 +4,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <h1>Witaj, @context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value!</h1>
+        <h1>Witaj, @authState.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value!</h1>
         <p>Jesteś zalogowany.</p>
     </Authorized>
     <NotAuthorized>
