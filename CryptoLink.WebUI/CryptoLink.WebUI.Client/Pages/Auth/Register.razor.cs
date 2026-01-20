@@ -1,5 +1,7 @@
 ﻿
 
+using System.Text.Json.Nodes;
+
 namespace CryptoLink.WebUI.Client.Pages.Auth
 {
     public partial class Register
@@ -9,14 +11,15 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string publicKey = string.Empty;
         private string encryptedMessage = string.Empty;
         private string decryptedToken = string.Empty;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
+        private string errorMessage = string.Empty;
 
         private async Task HandleInitiate()
         {
             errorMessage = string.Empty;
+
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(publicKey))
             {
-                errorMessage = "Wypełnij wszystkie pola.";
+                errorMessage = "Wypełnij wszystkie pola (nazwa użytkownika i klucz publiczny).";
                 return;
             }
 
@@ -28,10 +31,8 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             }
             catch (Exception ex)
             {
-                errorMessage = $"Błąd inicjacji: {ex.Message}";
+                errorMessage = ExtractErrorMessage(ex.Message);
             }
-
-
         }
 
         private async Task HandleComplete()
@@ -40,7 +41,7 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
 
             if (string.IsNullOrWhiteSpace(decryptedToken))
             {
-                errorMessage = "Wklej odszyfrowany token.";
+                errorMessage = "Wklej odszyfrowany token, aby potwierdzić posiadanie klucza.";
                 return;
             }
 
@@ -56,16 +57,60 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             }
             catch (Exception ex)
             {
-                errorMessage = "Verification failed. Please check if you decrypted the content correctly.";
+                errorMessage = ExtractErrorMessage(ex.Message);
             }
         }
 
-        // Metoda pomocnicza do zera
+        private void ResetRegister()
+        {
+            step = 1;
+            errorMessage = string.Empty;
+            decryptedToken = string.Empty;
+            encryptedMessage = string.Empty;
+        }
+
         private void ClearSensitiveData()
         {
             publicKey = string.Empty;
             encryptedMessage = string.Empty;
             decryptedToken = string.Empty;
+        }
+
+
+        private string ExtractErrorMessage(string rawMessage)
+        {
+            try
+            {
+                int jsonStartIndex = rawMessage.IndexOf('{');
+                if (jsonStartIndex >= 0)
+                {
+                    string jsonPart = rawMessage.Substring(jsonStartIndex);
+                    var jsonNode = JsonNode.Parse(jsonPart);
+                    var detail = jsonNode?["detail"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(detail))
+                    {
+                        if (detail.Contains("User already exists", StringComparison.OrdinalIgnoreCase))
+                            return "Taka nazwa użytkownika jest już zajęta.";
+
+                        if (detail.Contains("Invalid public key", StringComparison.OrdinalIgnoreCase))
+                            return "Podany klucz publiczny jest nieprawidłowy lub uszkodzony.";
+
+                        if (detail.Contains("Verification failed", StringComparison.OrdinalIgnoreCase))
+                            return "Weryfikacja nieudana. Upewnij się, że poprawnie odszyfrowałeś token.";
+
+                        return "źle odszyfrowany token";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return rawMessage
+                .Replace("Błąd inicjacji: ", "")
+                .Replace("System.Exception: ", "");
         }
     }
 }

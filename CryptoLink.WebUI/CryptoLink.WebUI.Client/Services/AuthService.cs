@@ -36,6 +36,14 @@ public class AuthService
         var command = new { Username = username, DecryptedToken = decryptedToken };
 
         var response = await _httpClient.PostAsJsonAsync("api/auth/register/complete", command);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+
+            throw new Exception(errorContent);
+        }
+
         response.EnsureSuccessStatusCode();
     }
 
@@ -65,6 +73,13 @@ public class AuthService
         var command = new { Username = username, DecryptedToken = decryptedToken };
 
         var response = await _httpClient.PostAsJsonAsync("api/auth/login/complete", command);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+
+            throw new Exception(errorContent);
+        }
 
         response.EnsureSuccessStatusCode();
     }

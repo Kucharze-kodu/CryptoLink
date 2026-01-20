@@ -6,29 +6,35 @@
 <h3>Logowanie PGP</h3>
 
 <div class="card p-3">
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = string.Empty" aria-label="Close"></button>
+        </div>
+    }
+
     @if (step == 1)
     {
         <label>Nazwa użytkownika</label>
         <input @bind="username" class="form-control mb-2" placeholder="Wpisz swój nick" />
         <button class="btn btn-primary" @onclick="HandleInit">Zaloguj</button>
-
     }
     else if (step == 2)
     {
+        <div class="alert alert-warning">
+            <strong>Zadanie:</strong> Odszyfruj poniższą wiadomość swoim kluczem prywatnym.
+        </div>
 
-            <div class="alert alert-warning">
-                <strong>Zadanie:</strong> Odszyfruj poniższą wiadomość swoim kluczem prywatnym.
-            </div>
+        <div class="form-group">
+            <textarea readonly class="form-control mb-2" rows="10" value="@encryptedMessage"></textarea>
+        </div>
 
-            <div class="form-group">
-                <textarea readonly class="form-control mb-2" rows="5" value="@encryptedMessage"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Odszyfrowana treść:</label>
-                <input @bind="decryptedToken" class="form-control mb-2" placeholder="Wklej wynik tutaj" />
-                <button class="btn btn-success" @onclick="HandleVerify">Potwierdź tożsamość</button>
-            </div>
-
+        <div class="form-group">
+            <label>Odszyfrowana treść:</label>
+            <input @bind="decryptedToken" class="form-control mb-2" placeholder="Wklej wynik tutaj" />
+            <button class="btn btn-success" @onclick="HandleVerify">Wyślij</button>
+        </div>
     }
 </div>
+
