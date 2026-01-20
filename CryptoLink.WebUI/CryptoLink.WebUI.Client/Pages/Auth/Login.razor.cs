@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using CryptoLink.WebUI.Client.Services;
+﻿using CryptoLink.WebUI.Client.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace CryptoLink.WebUI.Client.Pages.Auth
 {
     public partial class Login
     {
-        [Inject]
-        private AuthService AuthService { get; set; }
-
-        [Inject]
-        private NavigationManager Navigation { get; set; }
-
         [Inject]
         private CookieAuthenticationStateProvider AuthProvider { get; set; }
 
