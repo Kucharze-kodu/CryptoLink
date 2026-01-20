@@ -88,6 +88,68 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01' =
   }
 }
 
+// === METRIC ALERTS ===
+
+// Alert: High CPU usage
+resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = if (!empty(logAnalyticsWorkspaceId)) {
+  name: '${aksClusterName}-high-cpu'
+  location: 'global'
+  properties: {
+    description: 'Alert when node CPU usage exceeds 80%'
+    severity: 2
+    enabled: true
+    scopes: [
+      aksCluster.id
+    ]
+    evaluationFrequency: 'PT5M'
+    windowSize: 'PT15M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
+      allOf: [
+        {
+          name: 'cpuUsage'
+          criterionType: 'StaticThresholdCriterion'
+          metricName: 'cpuUsagePercentage'
+          operator: 'GreaterThan'
+          threshold: 80
+          timeAggregation: 'Average'
+          dimensions: []
+        }
+      ]
+    }
+  }
+}
+
+// Alert: High memory usage
+resource memoryAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = if (!empty(logAnalyticsWorkspaceId)) {
+  name: '${aksClusterName}-high-memory'
+  location: 'global'
+  properties: {
+    description: 'Alert when node memory usage exceeds 85%'
+    severity: 2
+    enabled: true
+    scopes: [
+      aksCluster.id
+    ]
+    evaluationFrequency: 'PT5M'
+    windowSize: 'PT15M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
+      allOf: [
+        {
+          name: 'memoryUsage'
+          criterionType: 'StaticThresholdCriterion'
+          metricName: 'memoryUsagePercentage'
+          operator: 'GreaterThan'
+          threshold: 85
+          timeAggregation: 'Average'
+          dimensions: []
+        }
+      ]
+    }
+  }
+}
+
 // --- OUTPUTS ---
 @description('The name of the AKS cluster.')
 output clusterName string = aksCluster.name

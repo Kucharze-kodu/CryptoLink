@@ -24,68 +24,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12
 }
 
 // NOTE: Diagnostic settings configured in aks.bicep where we have resource reference
-
-// === METRICS ALERTS ===
-
-// Alert: High CPU usage
-resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: '${aksClusterName}-high-cpu'
-  location: 'global'
-  properties: {
-    description: 'Alert when node CPU usage exceeds 80%'
-    severity: 2
-    enabled: true
-    scopes: [
-      aksClusterResourceId
-    ]
-    evaluationFrequency: 'PT5M'
-    windowSize: 'PT15M'
-    criteria: {
-      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
-      allOf: [
-        {
-          name: 'cpuUsage'
-          criterionType: 'StaticThresholdCriterion'
-          metricName: 'cpuUsagePercentage'
-          operator: 'GreaterThan'
-          threshold: 80
-          timeAggregation: 'Average'
-          dimensions: []
-        }
-      ]
-    }
-  }
-}
-
-// Alert: Low available memory
-resource memoryAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: '${aksClusterName}-low-memory'
-  location: 'global'
-  properties: {
-    description: 'Alert when node memory usage exceeds 85%'
-    severity: 2
-    enabled: true
-    scopes: [
-      aksClusterResourceId
-    ]
-    evaluationFrequency: 'PT5M'
-    windowSize: 'PT15M'
-    criteria: {
-      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
-      allOf: [
-        {
-          name: 'memoryUsage'
-          criterionType: 'StaticThresholdCriterion'
-          metricName: 'memoryUsagePercentage'
-          operator: 'GreaterThan'
-          threshold: 85
-          timeAggregation: 'Average'
-          dimensions: []
-        }
-      ]
-    }
-  }
-}
+// NOTE: Metric alerts configured in aks.bicep where we have resource reference
 
 // === OUTPUTS ===
 @description('The resource ID of the Log Analytics workspace.')
