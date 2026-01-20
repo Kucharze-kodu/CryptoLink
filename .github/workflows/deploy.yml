@@ -125,7 +125,7 @@ jobs:
         # Jeśli zmieniłeś usera w bazie na 'postgres', zmień to też tutaj!
         kubectl create secret generic cryptolink-app-secrets \
           --namespace cryptolink-app \
-          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
+          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=postgres;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         # Tworzymy sekrety JWT
