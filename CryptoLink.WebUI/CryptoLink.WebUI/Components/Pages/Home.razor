@@ -2,6 +2,13 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<AuthorizeView>
+    <Authorized>
+        <h1>Witaj, @context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value!</h1>
+        <p>Jesteś zalogowany.</p>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Hello, world!</h1>
+        <p>Welcome to your new app. <a href="/login">Zaloguj się</a></p>
+    </NotAuthorized>
+</AuthorizeView>

@@ -17,11 +17,15 @@ namespace CryptoLink.WebUI.Client.Services
         {
             try
             {
+                Console.WriteLine("CookieAuthenticationStateProvider: Checking authentication state...");
+                
                 // Endpoint, który serwer zwraca informacje o zalogowanym użytkowniku
                 var userInfo = await _httpClient.GetFromJsonAsync<UserInfo>("/api/auth/me");
 
                 if (userInfo != null)
                 {
+                    Console.WriteLine($"CookieAuthenticationStateProvider: User authenticated: {userInfo.Username}");
+                    
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
@@ -33,10 +37,12 @@ namespace CryptoLink.WebUI.Client.Services
 
                     return new AuthenticationState(user);
                 }
+                
+                Console.WriteLine("CookieAuthenticationStateProvider: No user info returned");
             }
-            catch
+            catch (Exception ex)
             {
-                // Jeśli błąd, nie jesteśmy zalogowani
+                Console.WriteLine($"CookieAuthenticationStateProvider error: {ex.Message}");
             }
 
             return new AuthenticationState(new ClaimsPrincipal());

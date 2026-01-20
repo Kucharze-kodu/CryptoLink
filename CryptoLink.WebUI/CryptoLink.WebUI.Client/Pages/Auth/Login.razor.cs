@@ -41,11 +41,14 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             try
             {
                 await AuthService.CompleteLoginAsync(username, decryptedToken);
+                Console.WriteLine("Login successful, notifying auth provider...");
 
                 // Powiadom AuthenticationStateProvider
                 AuthProvider.NotifyUserAuthentication(username, username);
+                Console.WriteLine("Auth provider notified, navigating...");
 
-                Navigation.NavigateTo("/", forceLoad: true);
+                // Nawiguj bez forceLoad aby pozostać w Blazor kontekście
+                Navigation.NavigateTo("/");
             }
             catch (Exception ex)
             {
