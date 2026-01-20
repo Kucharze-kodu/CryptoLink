@@ -141,17 +141,17 @@ jobs:
       
     - name: Generate Missing Secrets
       run: |
-        # Tworzymy namespace jeśli nie istnieje (dla pewności)
+        # Tworzymy namespace (jeśli nie istnieje)
         kubectl create namespace cryptolink-app --dry-run=client -o yaml | kubectl apply -f -
 
-        # 1. Tworzymy brakujący sekret do bazy danych (ConnectionString)
-        # Używamy dry-run i apply, żeby działało idempotentnie (zawsze)
+        # Tworzymy ConnectionString z Twojego hasła w GitHub Secrets
+        # UWAGA: Upewnij się, że Username=azureuser jest zgodny z tym, co ustawiłeś w Bicep dla bazy!
         kubectl create secret generic cryptolink-app-secrets \
           --namespace cryptolink-app \
           --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=azureuser;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-        # 2. Tworzymy sekrety do JWT (jeśli ich też brakuje w repo)
+        # Tworzymy sekrety JWT
         kubectl create secret generic cryptolink-auth-secrets \
           --namespace cryptolink-app \
           --from-literal=JwtOptions__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
