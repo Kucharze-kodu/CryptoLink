@@ -40,6 +40,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
+builder.Services.AddScoped(sp => new HttpClient
+{
+    // Ustawiamy adres bazowy na adres samej aplikacji serwerowej
+    BaseAddress = new Uri(sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>().BaseUri)
+});
+
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();

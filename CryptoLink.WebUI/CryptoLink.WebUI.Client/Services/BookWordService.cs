@@ -1,4 +1,5 @@
-﻿using CryptoLink.WebUI.Client.Services.Command;
+﻿using CryptoLink.Application.Contracts.LinkWords;
+using CryptoLink.WebUI.Client.Services.Command;
 using CryptoLink.WebUI.Client.Services.Dto;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -33,7 +34,9 @@ public class BookWordService
 
         if (response.IsSuccessStatusCode)
         {
-            return await response.Content.ReadFromJsonAsync<string>();
+            var result = await response.Content.ReadFromJsonAsync<BookWordResponse>();
+
+            return result.Message;
         }
         else
         {
@@ -66,8 +69,9 @@ public class BookWordService
 
         if (response.IsSuccessStatusCode)
         {
-            var result = await response.Content.ReadFromJsonAsync<List<string>>();
-            return result ?? new List<string>();
+            var result = await response.Content.ReadFromJsonAsync<List<GetCategoryDto>>();
+
+            return result?.Select(x => x.Name).ToList() ?? new List<string>();
         }
         else
         {

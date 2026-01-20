@@ -48,13 +48,8 @@ namespace CryptoLink.WebUI.Client.Pages.Links
         {
             message = "";
             isError = false;
-            generatedLink = ""; 
+            generatedLink = Navigation.BaseUri;
 
-            if (!string.IsNullOrWhiteSpace(userProvidedUrl))
-            {
-                generatedLink = userProvidedUrl.Trim();
-                return;
-            }
 
             if (!selectedCategories.Any())
             {
@@ -71,7 +66,7 @@ namespace CryptoLink.WebUI.Client.Pages.Links
                     Categories: selectedCategories.ToList()
                 );
 
-                generatedLink = await BookWordService.GenerateLinkAsync(command);
+                generatedLink += await BookWordService.GenerateLinkAsync(command);
             }
             catch (Exception ex)
             {
@@ -85,12 +80,28 @@ namespace CryptoLink.WebUI.Client.Pages.Links
 
         private async Task SaveLink()
         {
-            if (userProvidedUrl is null)
+            if (string.IsNullOrWhiteSpace(userProvidedUrl))
             {
-                ShowMessage("Wpisz link.", true);
+                ShowMessage("Pole z linkiem nie może być puste.", true);
                 return;
             }
-            if (string.IsNullOrEmpty(generatedLink))
+            if (!userProvidedUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !userProvidedUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                userProvidedUrl = "https://" + userProvidedUrl;
+            }
+
+            // 2. Teraz sprawdź poprawność pełnego adresu
+            bool isValidUrl = Uri.TryCreate(userProvidedUrl, UriKind.Absolute, out Uri? uriResult)
+                              && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
+                              && uriResult.Host.Contains(".");
+            if (!isValidUrl)
+            {
+                ShowMessage("Podany tekst nie jest poprawnym linkiem (upewnij się, że zaczyna się od http:// lub https://).", true);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(generatedLink) && generatedLink != Navigation.BaseUri)
             {
                 ShowMessage("Najpierw wygeneruj link.", true);
                 return;
@@ -104,7 +115,7 @@ namespace CryptoLink.WebUI.Client.Pages.Links
                 var command = new CreateLinkExtendedCommand(
                     UrlExtended: generatedLink, 
                     UrlShort: userProvidedUrl,         
-                    DataExpire: selectedDate);
+                    DataExpire: selectedDate.ToUniversalTime());
 
                 await LinksService.CreateLinkAsync(command);
 

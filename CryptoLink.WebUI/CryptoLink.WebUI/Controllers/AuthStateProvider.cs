@@ -10,9 +10,10 @@ public static class AuthStateProvider
 {
     public static void AddAuthStateProvider(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/authC/logout", (HttpContext httpContext) =>
+        app.MapPost("/api/authC/logout", async (HttpContext httpContext) =>
         {
-            httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //httpContext.Response.Headers.Append("Clear-Site-Data", "\"Cookies\"");
             return Results.Ok();
         });
 
