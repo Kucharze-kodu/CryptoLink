@@ -1,19 +1,82 @@
 ﻿@page "/ListLink"
+@using CryptoLink.WebUI.Client.Services
+@using CryptoLink.WebUI.Client.Services.Dto
 @using Microsoft.AspNetCore.Components.Authorization
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
-@inject AuthService AuthService
+
+@inject LinksService LinksService
+@inject BookWordService BookWordService
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <h3>Lista linków</h3>
 
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert @(isError ? "alert-danger" : "alert-success") alert-dismissible fade show" role="alert">
+        @message
+        <button type="button" class="btn-close" @onclick="() => message = string.Empty" aria-label="Close"></button>
+    </div>
+}
 
 <AuthorizeView>
     <Authorized>
 
+        @if (linkExtended == null)
+        {
+            @if (isBusy)
+            {
+                <p><em>Ładowanie...</em></p>
+            }
+            else
+            {
+                <p><em>Brak Linków</em></p>
+            }
+        }
+        else
+        {
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>UrlShort</th>
+                        <th>UrlExtended</th>
+                        <th>Utworzono (UTC)</th>
+                        <th>Wygasa (UTC)</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var link in linkExtended)
+                    {
+                        <tr>
+                            <td>@link.UrlShort</td>
+                            <td class="text-truncate" style="max-width: 300px;" title="@link.UrlExtended">
+                                @link.UrlExtended
+                            </td>
+                            <td>@link.CreatedOnUtc</td>
+                            <td>@link.ExpiretOnUtc</td>
+
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => CopyLink(link.UrlExtended)">
+                                        <i class="bi bi-clipboard"></i> Kopiuj
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" @onclick="() => EditLink(link)">
+                                        Edytuj
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteLink(link.Id)">
+                                        Usuń
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
 
     </Authorized>
+    <NotAuthorized>
+        <p>Musisz być zalogowany, aby zobaczyć tę listę.</p>
+    </NotAuthorized>
 </AuthorizeView>
-
-@code {
-
-}

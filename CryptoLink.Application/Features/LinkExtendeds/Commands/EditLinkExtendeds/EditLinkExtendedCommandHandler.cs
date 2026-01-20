@@ -41,7 +41,7 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.EditLinkExtende
             UserId userId = UserId.Create(Convert.ToInt32(id));
             LinkExtendedId linkExtebdedId = LinkExtendedId.Create(request.Id);
 
-            await _linkExtendedRepository.EditLinkExntended(userId, linkExtebdedId, request.UrlExtended,request.DataExpire, cancellationToken);
+            await _linkExtendedRepository.EditLinkExntended(userId, linkExtebdedId, request.UrlExtended, request.DataExpire, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new LinkExtendedResponse("link edited");

@@ -1,4 +1,5 @@
 ﻿using CryptoLink.WebUI.Client.Services.Command;
+using CryptoLink.WebUI.Client.Services.Dto;
 using System.Net.Http.Json;
 
 
@@ -8,6 +9,7 @@ namespace CryptoLink.WebUI.Client.Services
     public class LinksService
     {
         private readonly HttpClient _httpClient;
+        public LinkExtendedDto? LinkToEdit { get; set; }
 
         public LinksService(HttpClient httpClient)
         {
@@ -30,23 +32,26 @@ namespace CryptoLink.WebUI.Client.Services
 
         public async Task DeleteLinkAsync(int id)
         {
-            var request = new HttpRequestMessage(HttpMethod.Delete, "api/linkExtended")
-            {
-                Content = JsonContent.Create(id)
-            };
+            var request = new HttpRequestMessage(HttpMethod.Delete, "api/linkExtended");
+
+            request.Content = JsonContent.Create(new { Id = id });
 
             var response = await _httpClient.SendAsync(request);
-            await HandleResponse(response);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Błąd podczas usuwania");
+            }
         }
 
 
-        public async Task<TResult?> GetAllLinksAsync<TResult>()
+        public async Task<List<LinkExtendedDto>?> GetAllLinksAsync()
         {
             var response = await _httpClient.GetAsync("api/linkExtended");
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<TResult>();
+                return await response.Content.ReadFromJsonAsync<List<LinkExtendedDto>>();
             }
             else
             {
@@ -55,8 +60,22 @@ namespace CryptoLink.WebUI.Client.Services
             }
         }
 
+        public async Task<LinkExtendedDto?> GetLinksAsync(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/linkExtendedbyId?id={id}");
 
-        public async Task<TResult?> LoadLinkAsync<TResult>(string queryLink)
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<LinkExtendedDto>();
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Błąd pobierania danych: {error}");
+            }
+        }
+
+        public async Task<string?> LoadLinkAsync(string queryLink)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "api/LoadlinkExtended")
             {
@@ -67,7 +86,7 @@ namespace CryptoLink.WebUI.Client.Services
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<TResult>();
+                return await response.Content.ReadFromJsonAsync<string>();
             }
             else
             {

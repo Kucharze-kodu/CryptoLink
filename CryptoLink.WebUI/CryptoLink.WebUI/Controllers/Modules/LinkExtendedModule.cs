@@ -2,6 +2,7 @@
 using CryptoLink.Application.Features.LinkExtendeds.Commands.DeleteLinkExntededs;
 using CryptoLink.Application.Features.LinkExtendeds.Commands.EditLinkExtendeds;
 using CryptoLink.Application.Features.LinkExtendeds.Queries.GetAllLinkExtended;
+using CryptoLink.Application.Features.LinkExtendeds.Queries.GetLinkExtended;
 using CryptoLink.Application.Features.LinkExtendeds.Queries.LoadLinkExtended;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -48,15 +49,29 @@ namespace CryptoLink.WebUI.Controllers.Modules
             }).RequireAuthorization();
 
 
+            app.MapGet("/api/linkExtendedbyId", async (
+                [AsParameters] GetLinkExtendedQuery querry,
+                [FromServices] ISender sender) =>
+            {
+                var response = await sender.Send(querry);
+
+                return response.Match(
+                    result => Ok(result),
+                    errors => Problem(errors));
+            }
+            ).RequireAuthorization();
+
+
+
             app.MapGet("/api/linkExtended", async (
                 [FromServices] ISender sender) =>
-                        {
-                            var response = await sender.Send(new GetAllLinkExtendedQuery());
+                {
+                    var response = await sender.Send(new GetAllLinkExtendedQuery());
 
-                            return response.Match(
-                                result => Ok(result),
-                                errors => Problem(errors));
-                        }
+                    return response.Match(
+                        result => Ok(result),
+                        errors => Problem(errors));
+                }
             ).RequireAuthorization();
 
 
