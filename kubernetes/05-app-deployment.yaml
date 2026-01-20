@@ -7,17 +7,29 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: cryptolink-app
+      app: cryptolink-webui
   template:
     metadata:
       labels:
-        app: cryptolink-app
+        app: cryptolink-webui
     spec:
+      # Używamy dedykowanego ServiceAccount z ograniczonymi uprawnieniami (RBAC)
+      serviceAccountName: cryptolink-app
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
       - name: cryptolink-webui
         image: ${IMAGE_NAME}
         ports:
         - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"

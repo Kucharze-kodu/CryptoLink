@@ -1,0 +1,88 @@
+# kubernetes/09-network-policies.yaml
+# Network Policies - segmentacja sieci i ograniczenie ruchu (least privilege)
+# Implementuje rules: traffic tylko między niezbędnymi komponentami
+
+---
+# Network Policy: zezwalaj na ruch do PostgreSQL tylko z aplikacji
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-network-policy
+  namespace: cryptolink-app
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-db
+  policyTypes:
+    - Ingress
+  ingress:
+    # Zezwalaj tylko z aplikacji CryptoLink
+    - from:
+        - podSelector:
+            matchLabels:
+              app: cryptolink-webui
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+# Network Policy: zezwalaj na ruch do aplikacji CryptoLink (z LB)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cryptolink-app-network-policy
+  namespace: cryptolink-app
+spec:
+  podSelector:
+    matchLabels:
+      app: cryptolink-webui
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Zezwalaj na ruch z Load Balancera (port 80, 443)
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+  egress:
+    # Zezwalaj na ruch do PostgreSQL
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres-db
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Zezwalaj na DNS (aby mógł rozwiązywać nazwy hostów)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    
+    # Zezwalaj na egress do internetu (jeśli aplikacja to wymaga)
+    - to:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443
+
+---
+# Network Policy: domyślnie odrzuć cały ruch (deny all)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: cryptolink-app
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress

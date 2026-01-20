@@ -36,8 +36,19 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-pr
       delegatedSubnetResourceId: subnetId
       privateDnsZoneArmResourceId: privateDnsZone.id
     }
-    storage: { storageSizeGB: 32 }
-    backup: { backupRetentionDays: 7, geoRedundantBackup: 'Disabled' }
+    storage: { 
+      storageSizeGB: 32
+    }
+    backup: { 
+      backupRetentionDays: 30
+      geoRedundantBackup: 'Enabled'
+    }
+    dataEncryption: {
+      type: 'SystemManaged'
+    }
+    highAvailability: {
+      mode: 'Disabled'
+    }
   }
 }
 

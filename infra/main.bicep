@@ -72,6 +72,20 @@ module management './modules/management.bicep' = {
   }
 }
 
+module monitoring './modules/monitoring.bicep' = {
+  params: {
+    location: location
+    aksClusterName: aksClusterName
+    aksClusterResourceId: aks.outputs.clusterResourceId
+  }
+}
+
+module backup './modules/backup.bicep' = {
+  params: {
+    location: location
+  }
+}
+
 // === OUTPUTS ===
 
 @description('The login server of the Azure Container Registry.')

@@ -76,7 +76,15 @@ resource jumphostVm 'Microsoft.Compute/virtualMachines@2023-07-01' = {
     }
     storageProfile: {
       imageReference: { publisher: 'Canonical', offer: '0001-com-ubuntu-server-jammy', sku: '22_04-lts-gen2', version: 'latest' }
-      osDisk: { createOption: 'FromImage' }
+      osDisk: { 
+        createOption: 'FromImage'
+        managedDisk: {
+          storageAccountType: 'Premium_LRS'
+          securityProfile: {
+            securityEncryptionType: 'VMGuestStateOnly'
+          }
+        }
+      }
     }
     networkProfile: {
       networkInterfaces: [ { id: jumphostNic.id } ]

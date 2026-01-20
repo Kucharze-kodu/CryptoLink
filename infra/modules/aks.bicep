@@ -44,5 +44,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-09-01' = {
 @description('The name of the AKS cluster.')
 output clusterName string = aksCluster.name
 
+@description('The resource ID of the AKS cluster.')
+output clusterResourceId string = aksCluster.id
+
 @description('The principal ID of the AKS cluster managed identity.')
 output aksPrincipalId string = aksCluster.identity.principalId

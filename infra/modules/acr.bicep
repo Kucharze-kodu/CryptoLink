@@ -15,8 +15,8 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    // UWAGA: To włączy admina. Jeśli polityka zabrania, zmień na false.
-    adminUserEnabled: true 
+    // UWAGA: Admin user jest wyłączony (least privilege - polegamy na Azure RBAC)
+    adminUserEnabled: false 
   }
 }
 

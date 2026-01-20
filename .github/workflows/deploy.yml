@@ -118,20 +118,21 @@ jobs:
         kubectl create namespace cryptolink-app --dry-run=client -o yaml | kubectl apply -f -
 
         # 1. SEKRET DLA BAZY DANYCH (POSTGRES)
-        # Ustawiamy usera na 'postgres' (standard) i hasło z GitHub Secrets
+        # Ustawiamy dedykowanego użytkownika aplikacji (least privilege - nie admin!)
         kubectl create secret generic postgres-secret \
           --namespace cryptolink-app \
-          --from-literal=POSTGRES_USER="postgres" \
-          --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
+          --from-literal=POSTGRES_USER="cryptolink_app" \
+          --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_APP_PASSWORD }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         # 2. SEKRET DLA APLIKACJI (CONNECTION STRING)
         # Musi pasować do tego powyżej!
         # Host=postgres-db-service (zgodnie z Twoim plikiem 04-postgres-service.yaml)
         # Database=cryptolink (zgodnie z Twoim plikiem 03-postgres-statefulset.yaml -> env: POSTGRES_DB)
+        # Uwaga: Używamy dedykowanego użytkownika cryptolink_app, nie postgres!
         kubectl create secret generic cryptolink-app-secrets \
           --namespace cryptolink-app \
-          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=postgres;Password=${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
+          --from-literal=ConnectionStrings__Default="Host=postgres-db-service;Port=5432;Database=cryptolink;Username=cryptolink_app;Password=${{ secrets.POSTGRES_APP_PASSWORD }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         # 3. SEKRETY JWT
