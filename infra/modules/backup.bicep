@@ -5,9 +5,6 @@
 @description('The Azure region for all resources.')
 param location string
 
-@description('The resource IDs of disks to backup.')
-param diskResourceIds array = []
-
 var recoveryServicesVaultName = 'cryptolink-backup-${uniqueString(resourceGroup().id)}'
 var backupPolicyName = 'cryptolink-backup-policy'
 

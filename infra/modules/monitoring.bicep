@@ -14,8 +14,6 @@ param aksClusterResourceId string
 @description('The name of the Log Analytics workspace.')
 param logAnalyticsWorkspaceName string = 'cryptolink-law-${uniqueString(resourceGroup().id)}'
 
-var containerInsightsSolution = 'ContainerInsights'
-
 // === LOG ANALYTICS WORKSPACE ===
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
   name: logAnalyticsWorkspaceName
@@ -29,7 +27,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12
 }
 
 // === CONTAINER INSIGHTS (DIAGNOSTICS) ===
-resource containerInsights 'Microsoft.Insights/diagnosticSettings@2021-05-01-stage' = {
+resource containerInsightsDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01' = {
   name: '${aksClusterName}-diagnostics'
   scope: resourceId('Microsoft.ContainerService/managedClusters', aksClusterName)
   properties: {
@@ -93,6 +91,7 @@ resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       allOf: [
         {
           name: 'cpuUsage'
+          criterionType: 'StaticThresholdCriterion'
           metricName: 'cpuUsagePercentage'
           operator: 'GreaterThan'
           threshold: 80
@@ -122,6 +121,7 @@ resource memoryAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       allOf: [
         {
           name: 'memoryUsage'
+          criterionType: 'StaticThresholdCriterion'
           metricName: 'memoryUsagePercentage'
           operator: 'GreaterThan'
           threshold: 85
