@@ -1,16 +1,11 @@
 ﻿using CryptoLink.Application.Common.Messaging;
 using CryptoLink.Application.Contracts.LinkExtendeds;
-using CryptoLink.Application.Features.LinkExtendeds.Commands.CreateLinkExtendeds;
 using CryptoLink.Application.Persistance;
 using CryptoLink.Application.Utils;
 using CryptoLink.Domain.Aggregates.LinkExtendeds.ValueObcjects;
 using CryptoLink.Domain.Aggregates.Users.ValueObjects;
+using CryptoLink.Domain.Common.Errors;
 using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoLink.Application.Features.LinkExtendeds.Commands.DeleteLinkExntededs
 {
@@ -29,7 +24,11 @@ namespace CryptoLink.Application.Features.LinkExtendeds.Commands.DeleteLinkExnte
 
         public async Task<ErrorOr<LinkExtendedResponse>> Handle(DeleteLinkExtendedCommand request, CancellationToken cancellationToken)
         {
-
+            var isVerify = _userContext.IsAuthenticated;
+            if (isVerify == false)
+            {
+                return Errors.LinkExtended.IsNotAuthorized;
+            }
 
             var id = _userContext.UserId;
             UserId userId = UserId.Create(Convert.ToInt32(id));

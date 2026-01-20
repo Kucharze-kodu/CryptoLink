@@ -32,7 +32,7 @@ namespace CryptoLink.Application.Features.BookWords.Commands.RandomLinks
             var randomLink = await _bookWordRepository.RandomLink(request.HowManyWord, request.Categories, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new BookWordResponse("random link is:" + randomLink);
+            return new BookWordResponse(randomLink);
         }
     }
 }

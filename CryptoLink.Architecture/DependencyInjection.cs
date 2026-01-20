@@ -8,6 +8,7 @@ using CryptoLink.Architecture.Utils;
 using CryptoLink.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,32 +43,42 @@ namespace CryptoLink.Architecture
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
-             {
-                 // Twoje parametry walidacji (Issuer, Key itp.)
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
-                 };
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                };
 
-                 options.Events = new JwtBearerEvents
-                 {
-                     OnMessageReceived = context =>
-                     {
-                         if (context.Request.Cookies.ContainsKey("CookiesAuth"))
-                         {
-                             context.Token = context.Request.Cookies["CookiesAuth"];
-                         }
-                         return Task.CompletedTask;
-                     }
-                 };
-             });
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.ContainsKey("CookiesAuth"))
+                        {
+                            context.Token = context.Request.Cookies["CookiesAuth"];
+                        }
+                        return Task.CompletedTask;
+                    },
+
+
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+
+                        return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
+                    }
+                };
+            });
 
 
             services.ConfigureOptions<JwtOptionsSetup>();

@@ -1,0 +1,72 @@
+﻿@page "/ListForm"
+@using CryptoLink.WebUI.Client.Services
+@using CryptoLink.WebUI.Client.Services.Dto
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject LinksService LinksService
+@inject NavigationManager Navigation
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<h3>Edycja Linku</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (isLoading)
+        {
+            <p><em>Ładowanie danych...</em></p>
+        }
+        else
+        {
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <EditForm Model="@LinkModel" OnValidSubmit="HandleValidSubmit" Context="editContext">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Link Docelowy (Oryginalny)</label>
+                            <InputText class="form-control"
+                                       @bind-Value="LinkModel.UrlShort"
+                                       disabled="true" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Link Wydłużony (Treść)</label>
+                            <InputTextArea class="form-control"
+                                           rows="4"
+                                           @bind-Value="LinkModel.UrlExtended"
+                                           disabled="true" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-primary">Data wygaśnięcia (UTC)</label>
+                            <InputDate class="form-control border-primary"
+                                       @bind-Value="LinkModel.ExpiretOnUtc" />
+                            <ValidationMessage For="@(() => LinkModel.ExpiretOnUtc)" />
+                            <div class="form-text">Możesz wydłużyć lub skrócić ważność tego linku.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" @onclick="Cancel">Wróć</button>
+                            <button type="submit" class="btn btn-primary">
+                                @(IsEditMode ? "Zapisz nową datę" : "Utwórz Link")
+                            </button>
+                        </div>
+
+                    </EditForm>
+                </div>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">Musisz być zalogowany, aby zarządzać linkiem.</div>
+    </NotAuthorized>
+</AuthorizeView>

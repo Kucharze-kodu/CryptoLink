@@ -1,4 +1,6 @@
 ﻿
+using System.Text.Json.Nodes;
+
 namespace CryptoLink.WebUI.Client.Pages.Auth
 {
     public partial class Login
@@ -7,22 +9,27 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string username;
         private string encryptedMessage;
         private string decryptedToken;
-        private string errorMessage = string.Empty; // Do wyświetlania błędów w UI
-
+        private string errorMessage = string.Empty;
 
 
         private async Task HandleInit()
         {
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                errorMessage = "Proszę podać nazwę użytkownika.";
+                return;
+            }
+
             try
             {
-                // KROK 1: Pobierz zagadkę
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
                 step = 2;
             }
             catch (Exception ex)
             {
-                // Np. brak użytkownika w bazie
-                Console.WriteLine(ex.Message);
+                errorMessage = ExtractErrorMessage(ex.Message);
             }
         }
 
@@ -30,23 +37,45 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         {
             errorMessage = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(decryptedToken))
-            {
-                errorMessage = "Wklej odszyfrowany token.";
-                return;
-            }
-
-
             try
             {
                 await AuthService.CompleteLoginAsync(username, decryptedToken);
-
                 Navigation.NavigateTo("/", forceLoad: true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error veryfy");
+                errorMessage = ExtractErrorMessage(ex.Message);
             }
+        }
+
+        private string ExtractErrorMessage(string rawMessage)
+        {
+            try
+            {
+                int jsonStartIndex = rawMessage.IndexOf('{');
+                if (jsonStartIndex >= 0)
+                {
+                    string jsonPart = rawMessage.Substring(jsonStartIndex);
+
+                    var jsonNode = JsonNode.Parse(jsonPart);
+
+                    var detail = jsonNode?["detail"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(detail))
+                    {
+                        if (detail == "User not found") return "Użytkownik nie został znaleziony.";
+                        if (detail == "Invalid token") return "Podano nieprawidłowy token.";
+
+                        return "źle odszyfrowany token";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return rawMessage.Replace("Błąd inicjalizacji: ", "").Replace("Błąd serwera: ", "");
         }
     }
 }

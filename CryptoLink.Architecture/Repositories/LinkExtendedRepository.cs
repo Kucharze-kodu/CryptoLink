@@ -76,6 +76,19 @@ namespace CryptoLink.Architecture.Repositories
             return resultlist;
         }
 
+        public async Task<LinkExtended> GetLinkExtended(UserId userId, LinkExtendedId linkExtendedId, CancellationToken cancellationToken = default)
+        {
+            var result = await _dbContext.LinkExtendeds
+                .FirstOrDefaultAsync(x => x.Id == linkExtendedId && x.UserId == userId, cancellationToken);
+
+            if (result is null)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
         public async Task<string?> LoadLinkExtended(string linkExtended, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.LinkExtendeds

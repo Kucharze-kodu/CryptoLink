@@ -1,9 +1,11 @@
 using CryptoLink.Application;
 using CryptoLink.Architecture;
+using CryptoLink.Architecture.Utils.Extensions;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
 using CryptoLink.WebUI.Controllers.Modules;
-using CryptoLink.Architecture.Utils.Extensions;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -31,9 +33,18 @@ var builder = WebApplication.CreateBuilder(args);
     .AddArchitecture(builder.Configuration);
 }
 
-// Swagger (opcjonalnie, przydatne do testów)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Swagger (opcjonalnie, przydatne do testï¿½w)
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
+builder.Services.AddScoped(sp => new HttpClient
+{
+    // Ustawiamy adres bazowy na adres samej aplikacji serwerowej
+    BaseAddress = new Uri(sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>().BaseUri)
+});
 
 
 // Add services to the container.
@@ -41,7 +52,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
@@ -63,9 +73,12 @@ app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapowanie Endpointów
+// Mapowanie Endpointï¿½w
 // ENDPOINTS
+app.AddLinkExtendedModule();
+app.AddLinkWordModule();
 app.AddAuthenticationEndpoints();
+app.AddAuthStateProvider();
 // END ENDPOINTS
 
 
@@ -74,7 +87,7 @@ app.AddAuthenticationEndpoints();
 app.ApplyMigration();
 app.ApplySeeder();
 
-// Mapowanie komponentów Blazor
+// Mapowanie komponentï¿½w Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CryptoLink.WebUI.Client._Imports).Assembly);

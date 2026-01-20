@@ -1,0 +1,111 @@
+﻿@page "/CreateLink"
+@using CryptoLink.WebUI.Client.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject LinksService LinksService
+@inject BookWordService BookWordService
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+
+
+<h3>Tworzenie linku</h3>
+
+<div class="row">
+    <div class="col-md-6">
+        
+        <div class="mb-4">
+            <label class="form-label fw-bold">Wklej link docelowy:</label>
+            <input type="text" 
+                   class="form-control" 
+                   placeholder="np. https://google.com" 
+                   @bind="userProvidedUrl" />
+        </div>
+
+        <hr />
+
+        <div class="mb-3">
+            <label class="form-label">Wybierz kategorie:</label>
+            <div class="card p-2" style="max-height: 200px; overflow-y: auto;">
+                @foreach (var cat in categories)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="cat_@cat" 
+                               checked="@selectedCategories.Contains(cat)" 
+                               @onchange="e => UpdateCategories(cat, e.Value)">
+                        <label class="form-check-label" for="cat_@cat">
+                            @cat
+                        </label>
+                    </div>
+                }
+            </div>
+            <small class="text-muted">Wybrano: @(selectedCategories.Any() ? string.Join(", ", selectedCategories) : "brak")</small>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="wordCountRange" class="form-label">
+                Ilość słów: <strong>@wordCount</strong>
+            </label>
+            <input type="range" class="form-range" id="wordCountRange" 
+                   min="10" max="175" step="1" 
+                   @bind="wordCount" @bind:event="oninput" />
+            <div class="d-flex justify-content-between text-muted small">
+                <span>10</span>
+                <span>175</span>
+            </div>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="dateSelect" class="form-label">Data wygaśnięcia:</label>
+            <input type="date" id="dateSelect" class="form-control" @bind="selectedDate" />
+        </div>
+
+
+        <button class="btn btn-primary mb-4 w-100" @onclick="GenerateLink">
+            <i class="bi bi-gear"></i> Generuj / Podgląd Linku
+        </button>
+
+        @if (!string.IsNullOrEmpty(generatedLink))
+        {
+            <div class="card border-primary mb-3">
+                <div class="card-header bg-primary text-white">
+                    Podgląd linku
+                </div>
+                <div class="card-body bg-light">
+                    <label class="form-label fw-bold">Twój link docelowy (UrlExtended):</label>
+                    <code class="d-block p-2 bg-white border rounded text-break mb-3">@generatedLink</code>
+
+                    <button class="btn btn-success w-100" @onclick="SaveLink" disabled="@isBusy">
+                        @if (isBusy)
+                        {
+                            <span class="spinner-border spinner-border-sm"></span> <span>Zapisywanie...</span>
+                        }
+                        else
+                        {
+                            <i class="bi bi-save"></i> <span>Zapisz link do bazy</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        }
+
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="mt-3 alert @(isError ? "alert-danger" : "alert-success")">
+                @message
+            </div>
+        }
+    </div>
+</div>
+
+
+    </Authorized>
+</AuthorizeView>

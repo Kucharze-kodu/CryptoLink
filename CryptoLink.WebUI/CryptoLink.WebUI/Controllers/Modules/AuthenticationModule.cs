@@ -2,6 +2,7 @@
 using CryptoLink.Application.Features.Users.LoginInit;
 using CryptoLink.Application.Features.Users.Register;
 using CryptoLink.Application.Features.Users.RegisterInit;
+using CryptoLink.Domain.Aggregates.Users.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using static CryptoLink.WebUI.Controllers.Common.HttpResultsExtensions;
@@ -35,8 +36,6 @@ public static class AuthenticationModule
         });
 
 
-
-
         app.MapPost("/api/auth/login/init", async (
             [FromBody] LoginInitCommand command,
             [FromServices] ISender sender) =>
@@ -63,7 +62,8 @@ public static class AuthenticationModule
                         HttpOnly = true,    
                         Secure = true,      
                         SameSite = SameSiteMode.Strict, 
-                        Expires = result.TokenExpiresOnUtc
+                        Expires = result.TokenExpiresOnUtc,
+                        Path = "/"
                     };
 
                     httpContext.Response.Cookies.Append("CookiesAuth", result.Token, cookieOptions);
@@ -72,10 +72,5 @@ public static class AuthenticationModule
                 errors => Problem(errors));
         });
 
-        app.MapPost("/api/auth/logout", (HttpContext httpContext) =>
-        {
-            httpContext.Response.Cookies.Delete("CookiesAuth");
-            return Results.Ok();
-        });
     }
 }
