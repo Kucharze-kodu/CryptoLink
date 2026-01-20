@@ -61,8 +61,8 @@ public static class AuthenticationModule
                     var cookieOptions = new CookieOptions
                     {
                         HttpOnly = true,    
-                        Secure = true,      
-                        SameSite = SameSiteMode.Strict, 
+                        Secure = false,     // Pozwalamy na HTTP
+                        SameSite = SameSiteMode.Lax,  // Rozluźniona dla HTTP
                         Expires = result.TokenExpiresOnUtc
                     };
 
