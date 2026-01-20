@@ -7,8 +7,6 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
 {
     public partial class Login
     {
-        [Inject]
-        private CookieAuthenticationStateProvider AuthProvider { get; set; }
 
         private int step = 1;
         private string username;

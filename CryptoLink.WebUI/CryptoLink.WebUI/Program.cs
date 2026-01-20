@@ -37,7 +37,6 @@ var builder = WebApplication.CreateBuilder(args);
 }
 
 // Swagger (opcjonalnie, przydatne do test�w)
-
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 

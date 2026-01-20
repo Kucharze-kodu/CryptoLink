@@ -77,27 +77,7 @@ public static class AuthenticationModule
         });
 
 
-        app.MapPost("/api/auth/logout", (HttpContext httpContext) =>
-        {
-            httpContext.Response.Cookies.Delete("CookiesAuth");
-            return Results.Ok();
-        });
 
-        app.MapGet("/api/auth/me", (HttpContext httpContext) =>
-        {
-            // Middleware JWT powinien był wypełnić HttpContext.User z dekodera JWT
-            if (httpContext.User?.Identity?.IsAuthenticated ?? false)
-            {
-                var nameIdentifier = httpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-                var name = httpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
-                if (!string.IsNullOrEmpty(nameIdentifier) && !string.IsNullOrEmpty(name))
-                {
-                    return Results.Ok(new { UserId = nameIdentifier, Username = name });
-                }
-            }
-
-            return Results.Unauthorized();
-        });
     }
 }
