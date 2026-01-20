@@ -1,9 +1,11 @@
 using CryptoLink.Application;
 using CryptoLink.Architecture;
+using CryptoLink.Architecture.Utils.Extensions;
 using CryptoLink.WebUI.Client.Pages;
 using CryptoLink.WebUI.Components;
 using CryptoLink.WebUI.Controllers.Modules;
-using CryptoLink.Architecture.Utils.Extensions;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -35,8 +37,18 @@ var builder = WebApplication.CreateBuilder(args);
 }
 
 // Swagger (opcjonalnie, przydatne do test�w)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
+builder.Services.AddScoped(sp => new HttpClient
+{
+    // Ustawiamy adres bazowy na adres samej aplikacji serwerowej
+    BaseAddress = new Uri(sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>().BaseUri)
+});
 
 
 // Add services to the container.
@@ -44,7 +56,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
@@ -68,9 +79,14 @@ app.UseAuthorization();
 
 // Mapowanie Endpoint�w
 // ENDPOINTS
+app.AddLinkExtendedModule();
+app.AddLinkWordModule();
 app.AddAuthenticationEndpoints();
+
 // Health check endpoint
 app.MapHealthChecks("/health");
+app.AddAuthStateProvider();
+
 // END ENDPOINTS
 
 

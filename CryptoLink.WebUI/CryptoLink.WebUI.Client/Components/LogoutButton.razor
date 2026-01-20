@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using CryptoLink.WebUI.Client.Components
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+
+
+@rendermode InteractiveWebAssembly
+
+<button class="btn btn-link" @onclick="Logout">Wyloguj</button>
+
+@code {
+    private async Task Logout()
+    {
+        try
+        {
+
+            await Http.PostAsync("/api/authC/logout", null);
+
+            if (AuthStateProvider is CustomAuthStateProvider customProvider)
+            {
+                customProvider.NotifyUserLogout();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd: {ex.Message}");
+        }
+        finally
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+    }
+}

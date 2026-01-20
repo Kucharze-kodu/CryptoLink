@@ -1,5 +1,7 @@
-﻿@page "/register"
+﻿@page "/Register"
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using System.Text.Json
+@using System.Text.Json.Nodes
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 
@@ -7,34 +9,49 @@
 
 <h3>Rejestracja PGP</h3>
 
-@if (step == 1)
-{
-    <div class="form-group">
-        <label>Nazwa użytkownika</label>
-        <input @bind="username" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Twój Klucz Publiczny PGP</label>
-        <textarea @bind="publicKey" class="form-control" rows="5"></textarea>
-    </div>
-    <button class="btn btn-primary" @onclick="HandleInitiate">Dalej</button>
-}
-else if (step == 2)
-{
-    <div class="alert alert-info">
-        <strong>Zadanie dla Ciebie:</strong> Odszyfruj poniższą wiadomość swoim kluczem prywatnym i wklej wynik poniżej.
-    </div>
+<div class="card p-3">
 
-    <div class="form-group">
-        <label>Zaszyfrowany Challenge (od serwera)</label>
-        <textarea readonly class="form-control" rows="5" value="@encryptedMessage"></textarea>
-    </div>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = string.Empty" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="form-group">
-        <label>Odszyfrowany Token (Wklej tutaj)</label>
-        <input @bind="decryptedToken" class="form-control" placeholder="np. guid-token..." />
-    </div>
+    @if (step == 1)
+    {
+        <div class="form-group mb-3">
+            <label class="form-label">Nazwa użytkownika</label>
+            <input @bind="username" class="form-control" placeholder="Wybierz unikalny nick" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="form-label">Twój Klucz Publiczny PGP (RSA 2048)</label>
+            <textarea @bind="publicKey" class="form-control" rows="5" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK----- ..."></textarea>
+            <small class="text-muted">Wklej tutaj swój klucz publiczny (nie prywatny!).</small>
+        </div>
+        <button class="btn btn-primary" @onclick="HandleInitiate">Dalej</button>
+    }
+    else if (step == 2)
+    {
+        <div class="alert alert-info">
+            <strong>Zadanie dla Ciebie:</strong> Odszyfruj poniższą wiadomość swoim kluczem prywatnym i wklej wynik poniżej.
+        </div>
 
-    <button class="btn btn-success" @onclick="HandleComplete">Zarejestruj się</button>
-}
+        <div class="form-group mb-3">
+            <label class="form-label">Zaszyfrowany Challenge (od serwera)</label>
+            <textarea readonly class="form-control" rows="10" value="@encryptedMessage"></textarea>
+        </div>
 
+        <div class="form-group mb-3">
+            <label class="form-label">Odszyfrowany Token (Wklej tutaj)</label>
+            <input @bind="decryptedToken" class="form-control" placeholder="np. guid-token..." />
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" @onclick="HandleComplete">Zarejestruj się</button>
+            <button class="btn btn-secondary" @onclick="ResetRegister">Wróć / Popraw dane</button>
+        </div>
+    }
+
+</div>

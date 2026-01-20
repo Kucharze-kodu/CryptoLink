@@ -43,32 +43,42 @@ namespace CryptoLink.Architecture
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
-             {
-                 // Twoje parametry walidacji (Issuer, Key itp.)
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
-                 };
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                };
 
-                 options.Events = new JwtBearerEvents
-                 {
-                     OnMessageReceived = context =>
-                     {
-                         if (context.Request.Cookies.ContainsKey("CookiesAuth"))
-                         {
-                             context.Token = context.Request.Cookies["CookiesAuth"];
-                         }
-                         return Task.CompletedTask;
-                     }
-                 };
-             });
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.ContainsKey("CookiesAuth"))
+                        {
+                            context.Token = context.Request.Cookies["CookiesAuth"];
+                        }
+                        return Task.CompletedTask;
+                    },
+
+
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+
+                        return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
+                    }
+                };
+            });
 
             // Konfiguracja ciasteczek dla HTTP
             services.ConfigureApplicationCookie(options =>

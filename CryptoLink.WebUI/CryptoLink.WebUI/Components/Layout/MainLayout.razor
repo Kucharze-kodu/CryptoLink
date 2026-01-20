@@ -1,19 +1,53 @@
-﻿@inherits LayoutComponentBase
+﻿@using CryptoLink.WebUI.Controllers.Modules
+@using Microsoft.AspNetCore.Components.Authorization
+@using static System.Net.WebRequestMethods
+@using CryptoLink.WebUI.Client.Components
+
+@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+
 
 <div class="page">
+
     <div class="sidebar">
         <NavMenu />
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+
+    <main class="main-container">
+        <div class="top-row px-4 header" style="background-color: #046287;">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="Login">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Login
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link btn btn-primary btn-lg shadow-lg" href="Register">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+
+                <Authorized>
+                    <div class="nav-item px-3">
+                        Witaj, @context.User.Identity?.Name!
+                    </div>
+                    <LogoutButton />
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
             @Body
         </article>
     </main>
+
+
 </div>
 
 <div id="blazor-error-ui">
@@ -21,3 +55,5 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+

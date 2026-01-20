@@ -4,6 +4,10 @@
     flex-direction: column;
 }
 
+.main-container {
+    background-color: #d3d3d3;
+}
+
 main {
     flex: 1;
 }

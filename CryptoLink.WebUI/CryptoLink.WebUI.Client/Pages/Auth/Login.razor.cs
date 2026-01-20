@@ -1,5 +1,7 @@
-﻿using CryptoLink.WebUI.Client.Services;
+using CryptoLink.WebUI.Client.Services;
 using Microsoft.AspNetCore.Components;
+using System.Text.Json.Nodes;
+
 
 namespace CryptoLink.WebUI.Client.Pages.Auth
 {
@@ -14,8 +16,17 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         private string decryptedToken;
         private string errorMessage = string.Empty;
 
+
         private async Task HandleInit()
         {
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                errorMessage = "Proszę podać nazwę użytkownika.";
+                return;
+            }
+
             try
             {
                 encryptedMessage = await AuthService.InitiateLoginAsync(username);
@@ -25,6 +36,9 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
             {
                 errorMessage = "Błąd: " + ex.Message;
                 Console.WriteLine(ex.Message);
+
+                errorMessage = ExtractErrorMessage(ex.Message);
+
             }
         }
 
@@ -32,29 +46,45 @@ namespace CryptoLink.WebUI.Client.Pages.Auth
         {
             errorMessage = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(decryptedToken))
-            {
-                errorMessage = "Wklej odszyfrowany token.";
-                return;
-            }
-
             try
             {
                 await AuthService.CompleteLoginAsync(username, decryptedToken);
-                Console.WriteLine("Login successful, notifying auth provider...");
-
-                // Powiadom AuthenticationStateProvider
-                AuthProvider.NotifyUserAuthentication(username, username);
-                Console.WriteLine("Auth provider notified, navigating...");
-
-                // Nawiguj bez forceLoad aby pozostać w Blazor kontekście
-                Navigation.NavigateTo("/");
+                Navigation.NavigateTo("/", forceLoad: true);
             }
             catch (Exception ex)
             {
-                errorMessage = "Błąd logowania: " + ex.Message;
-                Console.WriteLine("Error verify: " + ex.Message);
+                errorMessage = ExtractErrorMessage(ex.Message);
             }
+        }
+
+        private string ExtractErrorMessage(string rawMessage)
+        {
+            try
+            {
+                int jsonStartIndex = rawMessage.IndexOf('{');
+                if (jsonStartIndex >= 0)
+                {
+                    string jsonPart = rawMessage.Substring(jsonStartIndex);
+
+                    var jsonNode = JsonNode.Parse(jsonPart);
+
+                    var detail = jsonNode?["detail"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(detail))
+                    {
+                        if (detail == "User not found") return "Użytkownik nie został znaleziony.";
+                        if (detail == "Invalid token") return "Podano nieprawidłowy token.";
+
+                        return "źle odszyfrowany token";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return rawMessage.Replace("Błąd inicjalizacji: ", "").Replace("Błąd serwera: ", "");
         }
     }
 }
