@@ -1683,7 +1683,7 @@ W terminalu wykonaj komendę, podstawiając swoje ID subskrypcji:
 
 ```bash
 az ad sp create-for-rbac --name "CryptoLinkDeployer" --role contributor \
-    --scopes /subscriptions/{TWOJE-SUBSCRIPTION-ID}/resourceGroups/{TWOJA-GRUPA>
+    --scopes /subscriptions/{TWOJE-SUBSCRIPTION-ID}/resourceGroups/{TWOJA-GRUPA-ZASOBOW} \
     --json-auth
 
 ```
