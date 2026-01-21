@@ -290,6 +290,7 @@ output aksClusterName string = aks.outputs.clusterName
 @description('The FQDN of the PostgreSQL server.')
 
 output databaseServerFqdn string = database.outputs.serverFqdn
+
 ```
 
 </details>
@@ -649,7 +650,9 @@ Moduł ten powołuje w pełni zarządzalną instancję bazy danych w postaci Paa
 4. Konfiguruje 30-dniową retencję kopii zapasowych oraz włącza usługę Geo-Redundant Backup. 
 <details> 
 <summary> Zawartość pliku database.bicep </summary>
+
 ```bicep
+
 // infra/modules/database.bicep
 
 @description('The Azure region for all resources.')
