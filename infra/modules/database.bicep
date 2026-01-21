@@ -15,7 +15,6 @@ param postgresAdminPassword string
 var postgresServerName = 'cryptolink-pg-server-${uniqueString(resourceGroup().id)}'
 var databaseName = 'cryptolink'
 
-// Tworzymy prywatną strefę DNS najpierw
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.postgres.database.azure.com'
   location: 'global'
@@ -25,7 +24,7 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-pr
   name: postgresServerName
   location: location
   sku: {
-    name: 'Standard_B1ms' // Mały, oszczędny SKU
+    name: 'Standard_B1ms'
     tier: 'Burstable'
   }
   properties: {
