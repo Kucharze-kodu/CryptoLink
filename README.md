@@ -1,4 +1,5 @@
 **Temat: Wdrożenie trójwarstwowej bezpiecznej aplikacji
+
 Przedmiot: Bezpieczeństwo Systemów Chmurowych**
 
 ## Wykorzystane technologie
@@ -11,7 +12,7 @@ W projekcie wykorzystano następujące technologie:
 
 ## Wstęp i architektura
 
-Celem projektu było wdrożenie bezpiecznej aplikacji webowej o wysokiej dostępności. Zamiast wdrożenia tradycyjnej maszyny wirtualnej (na przykład w postaci VPS), wykorzystano nowoczesne podejście konteneryzacji z wykorzystaniem Kubernetesa, który zapewnia lepszą izolację procesów, elastyczną skalowalność oraz automatyzację w postaci wykorzystania "Infrastructure as Code"(IaC).
+Celem projektu było wdrożenie bezpiecznej aplikacji webowej o wysokiej dostępności. Zamiast wdrożenia tradycyjnej maszyny wirtualnej (na przykład w postaci VPS), wykorzystano nowoczesne podejście konteneryzacji z wykorzystaniem Kubernetesa, który zapewnia lepszą izolację procesów, elastyczną skalowalność oraz automatyzację w postaci wykorzystania "Infrastructure as Code" (IaC).
 
 Podstawowymi systemami bezpieczeństwa są:
 - Zero Trust Network - wdrożono domyślną blokadę ruchu sieciowego wewnątrz klastra.

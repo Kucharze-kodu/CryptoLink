@@ -7,7 +7,7 @@ on:
 
 env:
   # Upewnij się, że ta nazwa zgadza się z tą w Bicep (jeśli jest na sztywno)
-  ACR_NAME: 'cryptolinkBRCh169606169600' 
+  ACR_NAME: 'cryptolinkbrch${{ github.run_number }}' 
   AKS_CLUSTER_NAME: 'aks-cryptolink'
 
 jobs:
