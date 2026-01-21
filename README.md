@@ -3,11 +3,12 @@ Przedmiot: Bezpieczeństwo Systemów Chmurowych**
 
 ## Wykorzystane technologie
 
-W projekcie wykorzystano następujące technologie: 
+W projekcie wykorzystano następujące technologie:
 - Azure Kubernetes Service (AKS) do wdrożenia aplikacji jako kontenery,
 - Bicep (IaC) do zdefiniowania w kodzie infrastruktury,
 - GitHub Actions do automatycznego wdrażania zaktualizowanej wersji aplikacji,
 - Azure Database for PostgreSQL do stworzenia bazy danych.
+
 ## Wstęp i architektura
 
 Celem projektu było wdrożenie bezpiecznej aplikacji webowej o wysokiej dostępności. Zamiast wdrożenia tradycyjnej maszyny wirtualnej (na przykład w postaci VPS), wykorzystano nowoczesne podejście konteneryzacji z wykorzystaniem Kubernetesa, który zapewnia lepszą izolację procesów, elastyczną skalowalność oraz automatyzację w postaci wykorzystania "Infrastructure as Code"(IaC).
@@ -16,6 +17,7 @@ Podstawowymi systemami bezpieczeństwa są:
 - Zero Trust Network - wdrożono domyślną blokadę ruchu sieciowego wewnątrz klastra.
 - Least Privilege - aplikacja działa z minimalnymi uprawnieniami (zapewnionymi przez RBAC), konto roota nie zostało wykorzystane w żadnym module. Do zrealizowania tego celu utworzono dedykowanego użytkownika (Service Account).
 - Defense in Depth - wykorzystano model cebuli celem zapewnienia ochrony na wielu warstwach: NSG-Network Policy-App Security Context.
+
 ## Infrastruktura sieciowa oraz zarządzanie dostępem
 
 ### Segmentacja sieci z wykorzystaniem VNet
