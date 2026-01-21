@@ -20,6 +20,9 @@ Podstawowymi systemami bezpieczeństwa są:
 
 ## Diagram architektury
 
+### Diagram Architektury
+
+```mermaid
 graph TD
     %% Definicje aktorów zewnętrznych
     User((Użytkownik))
@@ -30,9 +33,9 @@ graph TD
     subgraph Azure ["Azure Cloud (Region: North Europe)"]
         style Azure fill:#e1f5fe,stroke:#01579b
         
-        ACR[Azure Container Registry<br/>(Prywatne obrazy Docker)]
-        LAW[Log Analytics Workspace<br/>(Monitoring & Logi)]
-        Vault[Recovery Services Vault<br/>(Backup)]
+        ACR["Azure Container Registry<br/>(Prywatne obrazy Docker)"]
+        LAW["Log Analytics Workspace<br/>(Monitoring & Logi)"]
+        Vault["Recovery Services Vault<br/>(Backup)"]
 
         %% Sieć Wirtualna
         subgraph VNet ["Virtual Network (10.0.0.0/16)"]
@@ -47,7 +50,7 @@ graph TD
             %% Podsieć Zarządzania
             subgraph SubnetMgmt ["Management Subnet"]
                 style SubnetMgmt fill:#fff,stroke:#666
-                JumpHost[Jump Host VM<br/>(Linux)]
+                JumpHost["Jump Host VM<br/>(Linux)"]
             end
 
             %% Podsieć Aplikacji (AKS)
@@ -58,14 +61,14 @@ graph TD
                 
                 subgraph Pods ["KUBERNETES"]
                     style Pods fill:#e8f5e9,stroke:#2e7d32
-                    AppPod[Pod: CryptoLink App<br/>(Non-Root, ReadOnly)]
+                    AppPod["Pod: CryptoLink App<br/>(Non-Root, ReadOnly)"]
                 end
             end
 
             %% Podsieć Danych (Baza)
             subgraph SubnetDB ["Database Subnet"]
                 style SubnetDB fill:#fff,stroke:#666
-                Postgres[Azure Database for PostgreSQL<br/>(Private Link, Encrypted)]
+                Postgres["Azure Database for PostgreSQL<br/>(Private Link, Encrypted)"]
             end
         end
     end
@@ -93,8 +96,7 @@ graph TD
     AKS -.->|Metrics & Logs| LAW
     Postgres -.->|Logs| LAW
     Postgres -.->|Geo-Backup| Vault
-
-    
+```
 
 ## Infrastruktura sieciowa oraz zarządzanie dostępem
 
