@@ -1,6 +1,6 @@
-**Temat: Wdrożenie trójwarstwowej bezpiecznej aplikacji
+**Temat: Wdrożenie trójwarstwowej bezpiecznej aplikacji**
 
-Przedmiot: Bezpieczeństwo Systemów Chmurowych**
+**Przedmiot: Bezpieczeństwo Systemów Chmurowych**
 
 ## Wykorzystane technologie
 
@@ -1698,6 +1698,50 @@ Skopiuj cały wynikowy JSON (wraz z nawiasami `{}`) i wklej jako wartość sekre
 
 Proces wdrożenia trwa około 10-15 minut (tworzenie klastra AKS i bazy danych).
 
+## Pierwsze uruchomienie
+Jeśli pierwsze uruchomienie zwróci błąd z niezdrowym kontenerem, prawdopodobnie istnieje problem z uprawnieniami na portalu Azure.
+Kroki wymagane do naprawy tego błędu:
+1. **Ustawienie aktywnej subskrypcji**
+Upewnij się, że działasz w kontekście właściwej subskrypcji Azure, gdzie znajdują się zasoby.
+```bash
+az account set --subscription "NAZWA_LUB_ID_SUBSKRYPCJI"
+
+```
+
+
+2. **Pobranie poświadczeń do klastra**
+Skonfiguruj lokalne narzędzie `kubectl`, aby łączyło się z Twoim klastrem AKS.
+```bash
+az aks get-credentials --resource-group <NazwaGrupyZasobów> --name <NazwaKlastraAKS> --overwrite-existing
+
+```
+
+
+3. **Weryfikacja statusu wdrożenia**
+Sprawdź status podów. Jeśli widzisz status `ImagePullBackOff`, oznacza to problem z autoryzacją do rejestru obrazów.
+```bash
+kubectl get pods --namespace cryptolink-app
+
+```
+
+
+4. **Nadanie uprawnień (Integracja AKS z ACR)**
+To kluczowy krok naprawczy. Nadaje on uprawnienie `AcrPull` klastrowi AKS do wskazanego rejestru ACR.
+```bash
+az aks update -n <NazwaKlastraAKS> -g <NazwaGrupyZasobów> --attach-acr <NazwaRejestruACR>
+
+```
+
+
+*Przykład:* `az aks update -n aks-cryptolink -g projekt-BRCh-v2 --attach-acr cryptolinkbrch49`
+
+5. **Weryfikacja naprawy**
+Po wykonaniu powyższej komendy Kubernetes automatycznie ponowi próbę pobrania obrazu. Sprawdź ponownie status – powinien zmienić się na `ContainerCreating`, a następnie `Running`.
+```bash
+kubectl get pods --namespace cryptolink-app -w
+
+```
+
 ## Procedura Weryfikacji (Verification)
 
 Po zakończeniu działania Pipeline'u (zielony status), należy zweryfikować poprawność wdrożenia.
@@ -1705,10 +1749,7 @@ Po zakończeniu działania Pipeline'u (zielony status), należy zweryfikować po
 ### Weryfikacja 1: Dostępność Aplikacji
 
 1. Pobierz adres IP Load Balancera:
-```bash
-kubectl get service cryptolink-app-service -n cryptolink-app
-
-```
+```kubectl get service cryptolink-app-service -n cryptolink-app```
 
 
 2. Wejdź w przeglądarce na adres `http://<EXTERNAL-IP>`. Powinna ukazać się strona startowa aplikacji.
