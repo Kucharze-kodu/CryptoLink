@@ -20,8 +20,6 @@ Podstawowymi systemami bezpieczeństwa są:
 
 ## Diagram architektury
 
-### Diagram Architektury
-
 ```mermaid
 graph TD
     %% Definicje aktorów zewnętrznych
@@ -1646,3 +1644,95 @@ Aplikacja została poprawnie wdrożona, łączy się z bazą danych i jest publi
 ![Pasted image 20260120192859.png](images/Pasted%20image%2020260120192859.png)
 
 ![Pasted image 20260120192945.png](images/Pasted%20image%2020260120192945.png)![Pasted image 20260120193002.png](images/Pasted%20image%2020260120193002.png)
+
+# Instrukcja wdrożenia
+
+Poniższa instrukcja opisuje proces powołania infrastruktury od zera.
+
+1. Przygotowanie środowiska lokalnego
+
+Do zarządzania wdrożeniem wymagane są następujące narzędzia:
+    - Azure CLI
+    - Klucz SSH
+Generowanie nowego klucza odbywa się poleceniem w terminalu (Linux):
+```
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/cryptolink_key -N ""
+cat ~/.ssh/cryptolink_key.pub
+```
+
+2. Konfiguracja GitHub Secrets
+
+Należy skonfigurować bezpieczne zmienne w repozytorium GitHub.
+W repozytorium przejdź do **Settings** -> **Secrets and variables** -> **Actions**.
+Kliknij **New repository secret**.
+
+**Wymagane sekrety:**
+
+| Nazwa Sekretu | Wartość |
+| --- | --- |
+| `AZURE_CREDENTIALS` | JSON generowany poleceniem Azure CLI (patrz poniżej). |
+| `AZURE_SUBSCRIPTION_ID` | ID subskrypcji Azure (widoczne w portalu). |
+| `RESOURCE_GROUP` | Nazwa grupy zasobów (np. `projekt-BRCh-v2`). |
+| `SSH_PUBLIC_KEY` | Zawartość pliku `.pub` wygenerowanego w Kroku 1. |
+| `POSTGRES_ADMIN_PASSWORD` | Silne hasło dla użytkownika bazy danych. |
+| `JWT_SECRET_KEY` | Losowy ciąg znaków do podpisywania tokenów (min. 32 znaki)>
+
+**Generowanie `AZURE_CREDENTIALS` :**
+
+W terminalu wykonaj komendę, podstawiając swoje ID subskrypcji:
+
+```bash
+az ad sp create-for-rbac --name "CryptoLinkDeployer" --role contributor \
+    --scopes /subscriptions/{TWOJE-SUBSCRIPTION-ID}/resourceGroups/{TWOJA-GRUPA>
+    --json-auth
+
+```
+
+Skopiuj cały wynikowy JSON (wraz z nawiasami `{}`) i wklej jako wartość sekretu `AZURE_CREDENTIALS`. 
+
+## Uruchomienie pipeline'u
+1. Przejdź do zakładki **Actions** w GitHub.
+2. Wybierz workflow **"Build and Deploy CryptoLink to AKS"**.
+3. Kliknij **Run workflow** (lub wykonaj `git push` na branch `master`).
+
+Proces wdrożenia trwa około 10-15 minut (tworzenie klastra AKS i bazy danych).
+
+## Procedura Weryfikacji (Verification)
+
+Po zakończeniu działania Pipeline'u (zielony status), należy zweryfikować poprawność wdrożenia.
+
+### Weryfikacja 1: Dostępność Aplikacji
+
+1. Pobierz adres IP Load Balancera:
+```bash
+kubectl get service cryptolink-app-service -n cryptolink-app
+
+```
+
+
+2. Wejdź w przeglądarce na adres `http://<EXTERNAL-IP>`. Powinna ukazać się strona startowa aplikacji.
+
+### Weryfikacja 2: Izolacja Sieciowa (Test Bastionu)
+
+Próba bezpośredniego połączenia SSH z publicznego internetu powinna zakończyć się niepowodzeniem (Timeout). Poprawne połączenie:
+
+1. W portalu Azure przejdź do maszyny `jumphost-vm`.
+2. Wybierz opcję **Connect** -> **Bastion**.
+3. Wpisz nazwę użytkownika (`azureuser`) i wklej klucz prywatny SSH.
+4. Połączenie powinno zostać nawiązane w oknie przeglądarki.
+
+### Weryfikacja 3: Bezpieczeństwo Klastra (Network Policies)
+
+Weryfikacja czy polityka "Default Deny" działa. Z poziomu poda aplikacyjnego:
+
+```bash
+# Wejście do powłoki kontenera
+kubectl exec -it <POD_NAME> -n cryptolink-app -- /bin/sh
+
+# Próba połączenia z Google
+curl google.com 
+
+# Próba połączenia z bazą (powinna przejść lub zwrócić 'connection refused' a nie timeout)
+nc -zv postgres-db-service 5432
+
+
