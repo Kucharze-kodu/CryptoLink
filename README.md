@@ -809,6 +809,7 @@ output dbName string = db.name
 ```
 
 </details>
+
 #### management.bicep
 
 Moduł ten realizuje wymagania dotyczące bezpiecznego zarządzania infrastrukturą bez wystawiania portów administracyjnych do publicznego internetu. Wdraża architekturę typu "Jump Host".
@@ -1086,6 +1087,7 @@ output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 ```
 
 </details>
+
 #### networking.bicep 
 
 Moduł ten tworzy szkielet komunikacyjny dla całego systemu. Definiuje wirtualną sieć oraz realizuje segmentację sieci.
@@ -1217,6 +1219,7 @@ output bastionSubnetId string = '${vnet.id}/subnets/AzureBastionSubnet'
 ```
 
 </details>
+
 ### Pipeline z wykorzystaniem Github Actions
 
 Proces wdrażania zmian jest w pełni zautomatyzowany. Pipeline składa się z trzech etapów:
@@ -1538,6 +1541,7 @@ kubernetes/08-network-policy.yaml
 ```
 
 </details>
+
 ## Zaawansowane bezpieczeństwo dla Kubernetesa
 
 Wdrożono mechanizmy bezpieczeństwa specyficzne dla środowisk kontenerowych.
