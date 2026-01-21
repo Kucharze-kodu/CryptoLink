@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  # Upewnij się, że ta nazwa zgadza się z tą w Bicep (jeśli jest na sztywno)
-  ACR_NAME: 'cryptolinkbrch${{ github.run_number }}' 
+  # Stała nazwa ACR - bez dynamicznych numerów
+  ACR_NAME: 'cryptolinkregistry' 
   AKS_CLUSTER_NAME: 'aks-cryptolink'
 
 jobs:
@@ -143,16 +143,6 @@ jobs:
           --from-literal=JwtOptions__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
           --from-literal=Jwt__SecretKey="${{ secrets.JWT_SECRET_KEY }}" \
           --dry-run=client -o yaml | kubectl apply -f -
-
-    - name: 'Auto-Fix Permissions for Dynamic ACR'
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          echo "Nadawanie uprawnień dla klastra ${{ env.AKS_CLUSTER_NAME }} do rejestru ${{ env.ACR_NAME }}..."
-          az aks update \
-            --name ${{ env.AKS_CLUSTER_NAME }} \
-            --resource-group ${{ secrets.RESOURCE_GROUP }} \
-            --attach-acr ${{ env.ACR_NAME }}
 
     - name: 'Deploy to AKS'
       uses: Azure/k8s-deploy@v4
