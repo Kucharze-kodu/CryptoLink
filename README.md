@@ -18,6 +18,84 @@ Podstawowymi systemami bezpieczeństwa są:
 - Least Privilege - aplikacja działa z minimalnymi uprawnieniami (zapewnionymi przez RBAC), konto roota nie zostało wykorzystane w żadnym module. Do zrealizowania tego celu utworzono dedykowanego użytkownika (Service Account).
 - Defense in Depth - wykorzystano model cebuli celem zapewnienia ochrony na wielu warstwach: NSG-Network Policy-App Security Context.
 
+## Diagram architektury
+
+graph TD
+    %% Definicje aktorów zewnętrznych
+    User((Użytkownik))
+    Admin((Administrator))
+    GitHub[GitHub Actions CI/CD]
+
+    %% Chmura Azure
+    subgraph Azure ["Azure Cloud (Region: North Europe)"]
+        style Azure fill:#e1f5fe,stroke:#01579b
+        
+        ACR[Azure Container Registry<br/>(Prywatne obrazy Docker)]
+        LAW[Log Analytics Workspace<br/>(Monitoring & Logi)]
+        Vault[Recovery Services Vault<br/>(Backup)]
+
+        %% Sieć Wirtualna
+        subgraph VNet ["Virtual Network (10.0.0.0/16)"]
+            style VNet fill:#f3e5f5,stroke:#4a148c
+
+            %% Podsieć Publiczna (Bastion)
+            subgraph SubnetBastion ["AzureBastionSubnet"]
+                style SubnetBastion fill:#fff,stroke:#666
+                Bastion[Azure Bastion PaaS]
+            end
+
+            %% Podsieć Zarządzania
+            subgraph SubnetMgmt ["Management Subnet"]
+                style SubnetMgmt fill:#fff,stroke:#666
+                JumpHost[Jump Host VM<br/>(Linux)]
+            end
+
+            %% Podsieć Aplikacji (AKS)
+            subgraph SubnetAKS ["AKS Subnet"]
+                style SubnetAKS fill:#fff,stroke:#666
+                LB[Azure Load Balancer]
+                AKS[AKS Cluster]
+                
+                subgraph Pods ["KUBERNETES"]
+                    style Pods fill:#e8f5e9,stroke:#2e7d32
+                    AppPod[Pod: CryptoLink App<br/>(Non-Root, ReadOnly)]
+                end
+            end
+
+            %% Podsieć Danych (Baza)
+            subgraph SubnetDB ["Database Subnet"]
+                style SubnetDB fill:#fff,stroke:#666
+                Postgres[Azure Database for PostgreSQL<br/>(Private Link, Encrypted)]
+            end
+        end
+    end
+
+    %% Relacje i Przepływy
+    User -->|HTTP/80| LB
+    LB -->|Traffic| AKS
+    AKS -->|Ingress| AppPod
+    
+    %% Network Policies
+    AppPod -->|Network Policy: Allow 5432| Postgres
+    
+    %% Administracja
+    Admin -->|HTTPS/443| Bastion
+    Bastion -->|SSH| JumpHost
+    JumpHost -.->|kubectl / psql| AKS
+    JumpHost -.->|psql| Postgres
+
+    %% CI/CD i Obrazy
+    GitHub -->|Push Image| ACR
+    GitHub -->|Deploy Manifests| AKS
+    AKS -->|Pull Image| ACR
+
+    %% Monitoring i Backup
+    AKS -.->|Metrics & Logs| LAW
+    Postgres -.->|Logs| LAW
+    Postgres -.->|Geo-Backup| Vault
+
+    
+
 ## Infrastruktura sieciowa oraz zarządzanie dostępem
 
 ### Segmentacja sieci z wykorzystaniem VNet
