@@ -2,7 +2,7 @@ name: Build and Deploy CryptoLink to AKS
 
 on:
   push:
-    branches: [ master, cicd_kubernetes ]
+    branches: [ master ]
   workflow_dispatch:
 
 env:
