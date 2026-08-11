@@ -29,6 +29,19 @@ Repozytorium jest podzielone na warstwy:
 - JWT + PGP challenge flow
 - Docker / docker-compose
 
+## Wdrożenie chmurowe (Azure & Kubernetes)
+
+Projekt został w pełni zautomatyzowany i przystosowany do bezpiecznego wdrożenia w chmurze Microsoft Azure. Kompletna konfiguracja infrastruktury oraz szczegółowa dokumentacja z tym związana znajdują się na osobnym branchu.
+
+Architektura chmurowa obejmuje m.in.:
+* **Azure Kubernetes Service (AKS)** – konteneryzacja i orkiestracja aplikacji,
+* **Infrastructure as Code (IaC)** – modularne wdrażanie środowiska za pomocą Azure Bicep,
+* **CI/CD** – w pełni zautomatyzowany pipeline w GitHub Actions (budowanie obrazów, wdrażanie IaC i aplikacji),
+* **Zaawansowane bezpieczeństwo (Zero Trust & Least Privilege)** – prywatne podsieci (VNet), dostęp administracyjny przez Azure Bastion, Network Policies wewnątrz klastra oraz odizolowana baza Azure Database for PostgreSQL.
+
+👉 **[Zobacz szczegółowy opis architektury i instrukcję wdrożenia na branchu `cicd_kubernetes`](https://github.com/Kucharze-kodu/CryptoLink/tree/cicd_kubernetes)**
+
+
 ## Uruchomienie lokalne
 
 ### Wymagania
